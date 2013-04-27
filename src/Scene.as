@@ -50,6 +50,15 @@ public class Scene extends Sprite
   // addMaterial(material)
   public function addMaterial(material:Material):void
   {
+    var d:int = 16;
+    var bounds:Rectangle = material.bounds;
+    var x1:int = (_mapsize.x-bounds.width)/d;
+    var y1:int = (_mapsize.y-bounds.height)/d;
+    for (;;) {
+      bounds.x = Math.floor(Math.random()*x1)*d;
+      bounds.y = Math.floor(Math.random()*y1)*d;
+      if (!hasEntityOverlapping(bounds)) break;
+    }
     addChild(material);
     materials.push(material);
   }

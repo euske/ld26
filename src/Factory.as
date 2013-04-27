@@ -11,12 +11,12 @@ public class Factory extends Sprite
   private var _bounds:Rectangle;
   private var _entities:Array = [];
   
-  public function Factory(bounds:Rectangle, name:String)
+  public function Factory(bounds:Rectangle, color:uint, name:String)
   {
     graphics.beginFill(0xffffff);
     graphics.drawRect(0, 0, bounds.width, bounds.height);
     graphics.endFill();
-    graphics.lineStyle(4, 0xff0000);
+    graphics.lineStyle(4, color);
     graphics.drawRect(0, 0, bounds.width, bounds.height);
     x = bounds.x;
     y = bounds.y;
@@ -30,10 +30,9 @@ public class Factory extends Sprite
 	    _entities.indexOf(entity) == -1);
   }
 
-  public function putEntity(entity:Entity):void
+  public virtual function putEntity(entity:Entity):void
   {
     _entities.push(entity);
-    entity.process();
   }
 }
 

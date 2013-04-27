@@ -46,19 +46,26 @@ public class MainState extends GameState
   {
     //tilemap = new TileMap(mapimage.bitmapData, tilesimage.bitmapData, 32);
     scene = new Scene(width, height);
-    scene.addFactory(new Factory(new Rectangle(0, 0, 200, 100), "OVEN"));
-
-    for (var i:int = 0; i < 10; i++) {
-      var rect:Rectangle;
-      for (;;) {
-	rect = new Rectangle(Math.floor(Math.random()*20)*32, 
-			  Math.floor(Math.random()*20)*32,
-			  Math.floor(Math.random()*3+1)*32,
-			  Math.floor(Math.random()*3+1)*32);
-	if (!scene.hasEntityOverlapping(rect)) break;
-      }
-      scene.addMaterial(new Material(scene, rect));
-    }
+    scene.addFactory(new BoilingFactory(new Rectangle(0, 0, 200, 100), 0xff0000, "OVEN"));
+    scene.addFactory(new SeasoningFactory(new Rectangle(400, 0, 200, 100), 0x008844, "SEASONING"));
+    
+    // cucumber
+    scene.addMaterial(new Material(scene, 4, 7, 0x00cc00, 0x88ff00));
+    // tomato
+    scene.addMaterial(new Material(scene, 6, 6, 0xff0000, 0xff8800));
+    // beef
+    scene.addMaterial(new Material(scene, 5, 5, 0xcc88cc, 0x884444));
+    // pork
+    scene.addMaterial(new Material(scene, 7, 3, 0xffcccc, 0xcc8888));
+    // lettuce
+    scene.addMaterial(new Material(scene, 7, 7, 0x88ffcc, 0x88ff88));
+    // tofu
+    scene.addMaterial(new Material(scene, 5, 5, 0xcccccc, 0xffffcc));
+    // carrot
+    scene.addMaterial(new Material(scene, 3, 5, 0xcccc88, 0xcccc88));
+    // chicken
+    // onion
+    // herb?
 
     player = new Actor(scene, playerimage);
     scene.addActor(player);

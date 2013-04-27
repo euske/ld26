@@ -63,10 +63,16 @@ public class Entity extends Sprite
     this.y = p.y;
   }
 
-  // process()
-  public virtual function process():void
+  // boil()
+  public virtual function boil():void
   {
   }
+
+  // season()
+  public virtual function season():void
+  {
+  }
+  
 }
 
 } // package
