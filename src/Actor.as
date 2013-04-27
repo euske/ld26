@@ -11,8 +11,8 @@ public class Actor extends Entity
 {
   public var skin:Bitmap;
 
-  // _mode: 0=construction, 1=platformer.
-  private var _mode:int = 0;
+  // _construction:
+  private var _construction:Boolean = true;
   // _dx, _dy: intent to move.
   private var _dx:int, _dy:int;
 
@@ -25,16 +25,21 @@ public class Actor extends Entity
     addChild(this.skin);
   }
 
-  // setMode(mode)
-  public function setMode(mode:int):void
+  // setMode(construction)
+  public function setMode(construction:Boolean):void
   {
-    _mode = mode;
+    _construction = construction;
   }
   
-  // setDirection(dx, dy)
-  public function setDirection(dx:int, dy:int):void
+  // setDirectionX(dx)
+  public function setDirectionX(dx:int):void
   {
     _dx = dx*8;
+  }
+
+  // setDirectionY(dy)
+  public function setDirectionY(dy:int):void
+  {
     _dy = dy*8;
   }
 
@@ -49,7 +54,7 @@ public class Actor extends Entity
   // update()
   public override function update():void
   {
-    if (_mode == 0) {
+    if (_construction) {
       // construction mode.
       var material:Material;
       var allowed:Boolean = true;
@@ -82,9 +87,8 @@ public class Actor extends Entity
       vx = _dx;
       while (vx != 0 || vy != 0) {
 	if (!isBlocked(vx, vy)) break;
-	if (vy < 0) { vy = 0; }
-	vx = Math.floor(vx*0.9);
-	vy = Math.floor(vy*0.9);
+       	vx = (vx < 0)? Math.ceil(vx*0.9) : Math.floor(vx*0.9);
+      	vy = (vy < 0)? Math.ceil(vy*0.9) : Math.floor(vy*0.9);
       }
     }
     super.update();

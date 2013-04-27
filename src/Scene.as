@@ -25,8 +25,8 @@ public class Scene extends Sprite
   private var _scenesize:Point;
   // view
   private var _window:Rectangle;
-  // mode
-  private var _mode:int = 0;
+  // construction
+  private var _construction:Boolean = true;
   // plate status (10: full, 0: none)
   private var _plate:int = 0;
 
@@ -83,7 +83,7 @@ public class Scene extends Sprite
   // addMaterial(material)
   public function addMaterial(material:Material):void
   {
-    var d:int = 16;
+    var d:int = margin/2;
     var bounds:Rectangle = material.bounds;
     var x1:int = (_scenesize.x-margin*2-bounds.width)/d;
     var y1:int = (_scenesize.y-margin*2-bounds.height)/d;
@@ -141,12 +141,13 @@ public class Scene extends Sprite
   // toggleMode()
   public function toggleMode():void
   {
+    _construction = !_construction;
+
     var factory:Factory;
-    _mode = 1-_mode;
     for each (var actor:Actor in actors) {
-      actor.setMode(_mode);
+      actor.setMode(_construction);
     }
-    if (_mode == 0) {
+    if (_construction) {
       for each (factory in factories) {
 	addChild(factory);
       }
@@ -170,31 +171,33 @@ public class Scene extends Sprite
     for each (var actor:Actor in actors) {
       actor.update();
     }
-    // put materials into factories.
-    for each (material in materials) {
-      material.update();
-      for each (var factory:Factory in factories) {
-	if (factory.canAcceptMaterial(material)) {
-	  factory.putMaterial(material);
+    if (_construction) {
+      // detect grouped materials.
+      var groups:Array = new Array();
+      for each (material in materials) {
+	  if (material.group != null && groups.indexOf(material.group) == -1) {
+	    groups.push(material.group);
+	  }
 	}
-      }
-    }
-    // detect grouped materials.
-    var groups:Array = new Array();
-    for each (material in materials) {
-      if (material.group != null && groups.indexOf(material.group) == -1) {
-	groups.push(material.group);
-      }
-    }
-    for each (material in materials) {
-      for each (var m:Material in materials) {
-	if (material.hasContact(m)) {
-	  material.connectTo(m);
+      for each (material in materials) {
+	  for each (var m:Material in materials) {
+	      if (material.hasContact(m)) {
+		material.connectTo(m);
+	      }
+	    }
 	}
-      }
+      // move/update materials.
+      for each (material in materials) {
+	  material.update();
+	  for each (var factory:Factory in factories) {
+	      if (factory.canAcceptMaterial(material)) {
+		factory.putMaterial(material);
+	      }
+	    }
+	}
     }
     // update the plate.
-    if (_mode == 0) {
+    if (_construction) {
       updatePlate(10);
     } else {
       updatePlate(0);

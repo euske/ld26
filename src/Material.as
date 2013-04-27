@@ -112,7 +112,7 @@ public class Material extends Entity
     var connected:int = (this.group == null)? 0 : this.group.length;
     if (_connected != connected) {
       _connected = connected;
-      Main.log("connected:"+connected);
+      //Main.log("connected:"+connected);
       updateGraphics();
     }
   }
