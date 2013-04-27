@@ -56,6 +56,8 @@ public class MainState extends GameState
     // onion
     // herb?
 
+    scene.addActor(new Enemy(scene, playerimage));
+
     player = new Actor(scene, playerimage);
     scene.addActor(player);
   }

@@ -38,6 +38,12 @@ public class Scene extends Sprite
 
     updatePlate(10);
   }
+
+  // bounds
+  public function get bounds():Rectangle
+  {
+    return _window;
+  }
   
   // setCenter(p)
   public function setCenter(p:Point, hmargin:int, vmargin:int):void

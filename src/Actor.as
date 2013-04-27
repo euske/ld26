@@ -12,17 +12,17 @@ public class Actor extends Entity
   public var skin:Bitmap;
 
   // _construction:
-  private var _construction:Boolean = true;
+  protected var _construction:Boolean = true;
   // _dx, _dy: intent to move.
-  private var _dx:int, _dy:int;
+  protected var _dx:int, _dy:int;
 
   // Actor(scene, image)
   public function Actor(scene:Scene, skin:Bitmap)
   {
-    var rect:Rectangle = new Rectangle(skin.x, skin.y, skin.width, skin.height);
+    var rect:Rectangle = new Rectangle(128, 128, skin.width, skin.height);
     super(scene, rect);
     this.skin = skin;
-    addChild(this.skin);
+    addChild(new Bitmap(skin.bitmapData));
   }
 
   // setMode(construction)
