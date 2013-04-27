@@ -11,18 +11,24 @@ import Material;
 // 
 public class Scene extends Sprite
 {
-  private var _scenesize:Point;
-  private var _window:Rectangle;
-  private var _mode:int = 0;
-
-  // actors
+  // a list of actors.
   public var actors:Array = [];
-  // materials
+  // a list of deployed materials.
   public var materials:Array = [];
-  // factories
+  // a list of factories.
   public var factories:Array = [];
 
+  // margin
   public const margin:int = 32;
+
+  // scene size
+  private var _scenesize:Point;
+  // view
+  private var _window:Rectangle;
+  // mode
+  private var _mode:int = 0;
+  // plate status (10: full, 0: none)
+  private var _plate:int = 0;
 
   // Scene(width, height)
   public function Scene(width:int, height:int)
@@ -30,12 +36,41 @@ public class Scene extends Sprite
     _scenesize = new Point(width, height);
     _window = new Rectangle(0, 0, width, height);
 
-    // Draw a plate.
-    graphics.beginFill(0xffffff);
-    graphics.drawEllipse(0, 0, width, height);
-    graphics.endFill();
-    graphics.lineStyle(4, 0x000000);
-    graphics.drawEllipse(width/8, height/8, width*3/4, height*3/4);
+    updatePlate(10);
+  }
+  
+  // setCenter(p)
+  public function setCenter(p:Point, hmargin:int, vmargin:int):void
+  {
+    // Center the window position.
+    if (p.x-hmargin < _window.x) {
+      _window.x = p.x-hmargin;
+    } else if (_window.x+_window.width < p.x+hmargin) {
+      _window.x = p.x+hmargin-_window.width;
+    }
+    if (p.y-vmargin < _window.y) {
+      _window.y = p.y-vmargin;
+    } else if (_window.y+_window.height < p.y+vmargin) {
+      _window.y = p.y+vmargin-_window.height;
+    }
+    
+    // Adjust the window position to fit the world.
+    if (_window.x < 0) {
+      _window.x = 0;
+    } else if (_scenesize.x < _window.x+_window.width) {
+      _window.x = _scenesize.x-_window.width;
+    }
+    if (_window.y < 0) {
+      _window.y = 0;
+    } else if (_scenesize.y < _window.y+_window.height) {
+      _window.y = _scenesize.y-_window.height;
+    }
+  }
+
+  // translatePoint(p)
+  public function translatePoint(p:Point):Point
+  {
+    return new Point(p.x-_window.x, p.y-_window.y);
   }
 
   // addActor(actor)
@@ -106,9 +141,19 @@ public class Scene extends Sprite
   // toggleMode()
   public function toggleMode():void
   {
+    var factory:Factory;
     _mode = 1-_mode;
     for each (var actor:Actor in actors) {
       actor.setMode(_mode);
+    }
+    if (_mode == 0) {
+      for each (factory in factories) {
+	addChild(factory);
+      }
+    } else {
+      for each (factory in factories) {
+	removeChild(factory);
+      }
     }
   }
 
@@ -116,33 +161,43 @@ public class Scene extends Sprite
   public function update():void
   {
     var material:Material;
+    // initialize.
     for each (material in materials) {
       material.clearForce();
       material.clearConnection();
     }
-    for each (material in materials) {
-       for each (var m:Material in materials) {
-	  if (material.hasContact(m)) {
-	    material.connectTo(m);
-	  }
-	}
-    }
-    var groups:Array = new Array();
-    for each (material in materials) {
-	if (material.group != null && groups.indexOf(material.group) == -1) {
-	  groups.push(material.group);
-	}
-      }
+    // move actors.
     for each (var actor:Actor in actors) {
       actor.update();
     }
+    // put materials into factories.
     for each (material in materials) {
       material.update();
       for each (var factory:Factory in factories) {
-	  if (factory.canAcceptMaterial(material)) {
-	    factory.putMaterial(material);
-	  }
+	if (factory.canAcceptMaterial(material)) {
+	  factory.putMaterial(material);
+	}
       }
+    }
+    // detect grouped materials.
+    var groups:Array = new Array();
+    for each (material in materials) {
+      if (material.group != null && groups.indexOf(material.group) == -1) {
+	groups.push(material.group);
+      }
+    }
+    for each (material in materials) {
+      for each (var m:Material in materials) {
+	if (material.hasContact(m)) {
+	  material.connectTo(m);
+	}
+      }
+    }
+    // update the plate.
+    if (_mode == 0) {
+      updatePlate(10);
+    } else {
+      updatePlate(0);
     }
   }
 
@@ -157,39 +212,28 @@ public class Scene extends Sprite
     }
   }
 
-  // setCenter(p)
-  public function setCenter(p:Point, hmargin:int, vmargin:int):void
+  // updatePlate(plate): draws a plate.
+  private function updatePlate(plate:int):void
   {
-    // Center the window position.
-    if (p.x-hmargin < _window.x) {
-      _window.x = p.x-hmargin;
-    } else if (_window.x+_window.width < p.x+hmargin) {
-      _window.x = p.x+hmargin-_window.width;
+    if (_plate == plate) return;
+    if (_plate < plate) {
+      // bring up immediately.
+      _plate = plate;
+    } else {
+      // falling down slowly.
+      _plate--;
     }
-    if (p.y-vmargin < _window.y) {
-      _window.y = p.y-vmargin;
-    } else if (_window.y+_window.height < p.y+vmargin) {
-      _window.y = p.y+vmargin-_window.height;
-    }
-    
-    // Adjust the window position to fit the world.
-    if (_window.x < 0) {
-      _window.x = 0;
-    } else if (_scenesize.x < _window.x+_window.width) {
-      _window.x = _scenesize.x-_window.width;
-    }
-    if (_window.y < 0) {
-      _window.y = 0;
-    } else if (_scenesize.y < _window.y+_window.height) {
-      _window.y = _scenesize.y-_window.height;
-    }
+    var h:int = (_window.height-margin*2)*_plate/10;
+    var r:Rectangle = new Rectangle(margin, _window.height-h, _window.width-margin*2, h);
+    graphics.clear()
+    graphics.beginFill(0xffffff);
+    graphics.drawEllipse(r.x, r.y, r.width, r.height);
+    graphics.endFill();
+    graphics.lineStyle(4, 0x000000);
+    r.inflate(-r.width/8, -r.height/8);
+    graphics.drawEllipse(r.x, r.y, r.width, r.height);
   }
 
-  // translatePoint(p)
-  public function translatePoint(p:Point):Point
-  {
-    return new Point(p.x-_window.x, p.y-_window.y);
-  }
 }
 
 } // package
