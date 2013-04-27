@@ -42,7 +42,7 @@ public class Main extends Sprite
     _logger.height = 100;
     _logger.background = true;
     _logger.type = TextFieldType.DYNAMIC;
-    addChild(_logger);
+    //addChild(_logger);
 
     init();
   }
@@ -52,7 +52,9 @@ public class Main extends Sprite
   {
     _logger.appendText(x+"\n");
     _logger.scrollV = _logger.maxScrollV;
-    _logger.parent.setChildIndex(_logger, _logger.parent.numChildren-1);
+    if (_logger.parent != null) {
+      _logger.parent.setChildIndex(_logger, _logger.parent.numChildren-1);
+    }
   }
 
   // setPauseState(paused)

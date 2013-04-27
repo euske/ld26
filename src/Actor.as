@@ -28,13 +28,10 @@ public class Actor extends Entity
     this.dy = dy*8;
   }
 
-  // preupdate()
-  public function preupdate():void
+  // update()
+  public override function update():void
   {
     var entity:Entity;
-    for each (entity in scene.entities) {
-	entity.clearForce();
-    }
     var allowed:Boolean = true;
     var contacts:Array = getContacts(dx, dy);
     for each (entity in contacts) {
@@ -52,9 +49,10 @@ public class Actor extends Entity
       vx = 0;
       vy = 0;
       for each (entity in contacts) {
-	  entity.clearForce();
-	}
+	entity.clearForce();
+      }
     }
+    super.update();
   }
 }
 

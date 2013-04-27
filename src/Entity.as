@@ -37,6 +37,7 @@ public class Entity extends Sprite
   // applyForce(vx, vy): apply forces, returns true if it's movable.
   public function applyForce(vx:int, vy:int):Boolean
   {
+    if (this.vx != 0 || this.vy != 0) return false;
     for each (var entity:Entity in getContacts(vx, vy)) {
       if (entity != this) {
 	if (!entity.applyForce(vx, vy)) return false;
@@ -60,6 +61,11 @@ public class Entity extends Sprite
     var p:Point = scene.translatePoint(bounds.topLeft);
     this.x = p.x;
     this.y = p.y;
+  }
+
+  // process()
+  public virtual function process():void
+  {
   }
 }
 

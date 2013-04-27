@@ -9,18 +9,30 @@ import flash.geom.Point;
 public class Material extends Entity
 {
   // Material(scene, pt)
-  public function Material(scene:Scene, pt:Point)
+  public function Material(scene:Scene, bounds:Rectangle)
   {
-    super(scene, 
-	  new Rectangle(pt.x, pt.y,
-			Math.floor(Math.random()*2+1)*32,
-			Math.floor(Math.random()*2+1)*32));
+    super(scene, bounds);
+    updateState();
+  }
+  
+  public override function process():void
+  {
+    _boiled = true;
+    updateState();
+  }
+
+  private var _boiled:Boolean;
+  
+  private function updateState():void
+  {
+    var r:int = Math.floor(Math.random()*256);
+    var g:int = Math.floor(Math.random()*256);
+    var b:int = Math.floor(Math.random()*256);
     graphics.clear();
-    graphics.beginFill(0xffff00);
+    graphics.beginFill(r << 16 | g << 8 | b);
     graphics.drawRect(0, 0, bounds.width, bounds.height);
     graphics.endFill();
   }
-
 }
 
 } // package

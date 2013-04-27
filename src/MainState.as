@@ -9,21 +9,22 @@ import flash.geom.Point;
 import GameState;
 import Actor;
 import Scene;
-import TileMap;
+import Factory;
+//import TileMap;
 
 //  MainState
 //
 public class MainState extends GameState
 {
-  // Tile image:
-  [Embed(source="../assets/tiles.png", mimeType="image/png")]
-  private static const TilesImageCls:Class;
-  private static const tilesimage:Bitmap = new TilesImageCls();
+  // // Tile image:
+  // [Embed(source="../assets/tiles.png", mimeType="image/png")]
+  // private static const TilesImageCls:Class;
+  // private static const tilesimage:Bitmap = new TilesImageCls();
 
-  // Map image:
-  [Embed(source="../assets/map.png", mimeType="image/png")]
-  private static const MapImageCls:Class;
-  private static const mapimage:Bitmap = new MapImageCls();
+  // // Map image:
+  // [Embed(source="../assets/map.png", mimeType="image/png")]
+  // private static const MapImageCls:Class;
+  // private static const mapimage:Bitmap = new MapImageCls();
   
   // Player image:
   [Embed(source="../assets/player.png", mimeType="image/png")]
@@ -37,43 +38,49 @@ public class MainState extends GameState
 
   /// Game-related functions
 
-  private var tilemap:TileMap;
+  //private var tilemap:TileMap;
   private var scene:Scene;
   private var player:Actor;
 
   public function MainState(width:int, height:int)
   {
-    tilemap = new TileMap(mapimage.bitmapData, tilesimage.bitmapData, 32);
-    scene = new Scene(width, height, tilemap);
-    player = new Actor(scene, playerimage);
-    scene.add(player);
+    //tilemap = new TileMap(mapimage.bitmapData, tilesimage.bitmapData, 32);
+    scene = new Scene(width, height);
+    scene.addFactory(new Factory(new Rectangle(0, 0, 200, 100), "OVEN"));
 
     for (var i:int = 0; i < 10; i++) {
-      var p:Point = new Point(Math.floor(Math.random()*20)*32, 
-			      Math.floor(Math.random()*20)*32);
-      var thing1:Entity = new Material(scene, p);
-      scene.add(thing1);
+      var rect:Rectangle;
+      for (;;) {
+	rect = new Rectangle(Math.floor(Math.random()*20)*32, 
+			  Math.floor(Math.random()*20)*32,
+			  Math.floor(Math.random()*3+1)*32,
+			  Math.floor(Math.random()*3+1)*32);
+	if (!scene.hasEntityOverlapping(rect)) break;
+      }
+      scene.addMaterial(new Material(scene, rect));
     }
+
+    player = new Actor(scene, playerimage);
+    scene.addActor(player);
   }
 
   // open()
   public override function open():void
   {
-    addChild(tilemap);
+    //addChild(tilemap);
     addChild(scene);
   }
 
   // close()
   public override function close():void
   {
-    removeChild(tilemap);
+    //removeChild(tilemap);
     removeChild(scene);
   }
 
   // update()
   public override function update():void
   {
-    player.preupdate();
     scene.update();
     scene.repaint();
   }

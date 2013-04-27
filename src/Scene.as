@@ -3,48 +3,85 @@ package {
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import TileMap;
+//import TileMap;
 import Entity;
+import Actor;
+import Material;
 
 //  Scene
 // 
 public class Scene extends Sprite
 {
-  private var _tilemap:TileMap;
-  private var _window:Rectangle;
+  //private var _tilemap:TileMap;
   private var _mapsize:Point;
+  private var _window:Rectangle;
 
-  // entities
-  public var entities:Array = [];
+  // actors
+  public var actors:Array = [];
+  // materials
+  public var materials:Array = [];
+  // factories
+  public var factories:Array = [];
 
-  // Scene(width, height, tilemap)
-  public function Scene(width:int, height:int, tilemap:TileMap)
+  // Scene(width, height)
+  public function Scene(width:int, height:int)
   {
+    //_tilemap = tilemap;
+    //_mapsize = new Point(tilemap.mapwidth*tilemap.tilesize,
+    //tilemap.mapheight*tilemap.tilesize);
+    _mapsize = new Point(width, height);
     _window = new Rectangle(0, 0, width, height);
-    _tilemap = tilemap;
-    _mapsize = new Point(tilemap.mapwidth*tilemap.tilesize,
-			 tilemap.mapheight*tilemap.tilesize);
+    
+    graphics.beginFill(0xffffff);
+    graphics.drawEllipse(0, 0, width, height);
+    graphics.endFill();
+    graphics.lineStyle(4, 0x000000);
+    graphics.drawEllipse(width/8, height/8, width*3/4, height*3/4);
+    
   }
 
-  // add(entity)
-  public function add(entity:Entity):void
+  // addActor(actor)
+  public function addActor(actor:Actor):void
   {
-    addChild(entity);
-    entities.push(entity);
+    addChild(actor);
+    actors.push(actor);
   }
 
-  // remove(entity)
-  public function remove(entity:Entity):void
+  // addMaterial(material)
+  public function addMaterial(material:Material):void
   {
-    removeChild(entity);
-    entities.splice(entities.indexOf(entity), 1);
+    addChild(material);
+    materials.push(material);
+  }
+
+  // addFactory(factory)
+  public function addFactory(factory:Factory):void
+  {
+    addChild(factory);
+    factories.push(factory);
+  }
+
+  // removeMaterial(material)
+  public function removeMaterial(material:Material):void
+  {
+    removeChild(material);
+    materials.splice(materials.indexOf(material), 1);
+  }
+
+  // hasEntityOverlapping(rect)
+  public function hasEntityOverlapping(rect:Rectangle):Boolean
+  {
+    for each (var entity:Entity in materials) {
+	if (entity.bounds.intersects(rect)) return true;
+    }
+    return false;
   }
 
   // getContacts(rect)
   public function getContacts(rect:Rectangle):Array
   {
     var contacts:Array = new Array();
-    for each (var entity:Entity in entities) {
+    for each (var entity:Entity in materials) {
       if (entity.bounds.intersects(rect)) {
 	contacts.push(entity);
       }
@@ -55,18 +92,33 @@ public class Scene extends Sprite
   // update()
   public function update():void
   {
-    for each (var entity:Entity in entities) {
+    var entity:Entity;
+    for each (entity in materials) {
+	entity.clearForce();
+    }
+    for each (var actor:Actor in actors) {
+      actor.update();
+    }
+    for each (entity in materials) {
       entity.update();
+      for each (var factory:Factory in factories) {
+	  if (factory.canAcceptEntity(entity)) {
+	    factory.putEntity(entity);
+	  }
+      }
     }
   }
 
   // repaint()
   public function repaint():void
   {
-    for each (var entity:Entity in entities) {
+    for each (var actor:Actor in actors) {
+      actor.repaint();
+    }
+    for each (var entity:Entity in materials) {
       entity.repaint();
     }
-    _tilemap.repaint(_window);
+    //_tilemap.repaint(_window);
   }
 
   // setCenter(p)
