@@ -2,7 +2,6 @@ package {
 
 import flash.display.Bitmap;
 import flash.events.Event;
-import flash.media.Sound;
 import flash.ui.Keyboard;
 import flash.geom.Rectangle;
 import flash.geom.Point;
@@ -20,46 +19,17 @@ public class MainState extends GameState
   private static const PlayerImageCls:Class;
   private static const playerimage:Bitmap = new PlayerImageCls();
 
-  // Sound:
-  [Embed(source="../assets/sound.mp3")]
-  private static const JumpSoundCls:Class;
-  private static const jump:Sound = new JumpSoundCls();
-
   /// Game-related functions
 
   private var scene:Scene;
-  private var player:Actor;
+  private var player:Player;
 
   public function MainState(width:int, height:int)
   {
     scene = new Scene(width, height);
-    scene.addFactory(new RoastingFactory(new Rectangle(20, height-20-80, 160, 80),
-					 0xff0000, "ROAST"));
-    scene.addFactory(new SeasoningFactory(new Rectangle(width-20-160, height-20-80, 160, 80),
-					  0x008844, "SEASON"));
-    
-    // cucumber
-    scene.addMaterial(new Material(scene, 4, 7, 0x00cc00, 0x88ff00));
-    // tomato
-    scene.addMaterial(new Material(scene, 6, 6, 0xff0000, 0xff8800));
-    // beef
-    scene.addMaterial(new Material(scene, 5, 5, 0xcc88cc, 0x884444));
-    // pork
-    scene.addMaterial(new Material(scene, 7, 3, 0xffcccc, 0xcc8888));
-    // lettuce
-    scene.addMaterial(new Material(scene, 7, 7, 0x88ffcc, 0x88ff88));
-    // tofu
-    scene.addMaterial(new Material(scene, 5, 5, 0xcccccc, 0xffffcc));
-    // carrot
-    scene.addMaterial(new Material(scene, 3, 5, 0xcccc88, 0xcccc88));
-    // chicken
-    // onion
-    // herb?
 
-    scene.addActor(new Enemy(scene, playerimage));
-
-    player = new Actor(scene, playerimage);
-    scene.addActor(player);
+    scene.clearLevel();
+    player = scene.setLevel(0);
   }
 
   // open()
@@ -110,9 +80,12 @@ public class MainState extends GameState
       break;
 
     case Keyboard.SPACE:
-    case Keyboard.ENTER:
     case 88:			// X
     case 90:			// Z
+      player.jump();
+      break;
+
+    case Keyboard.ENTER:
       scene.toggleMode();
       break;
 
@@ -130,15 +103,6 @@ public class MainState extends GameState
     case 72:			// H
     case 76:			// L
       player.setDirectionX(0);
-      break;
-
-    case Keyboard.UP:
-    case Keyboard.DOWN:
-    case 87:			// W
-    case 75:			// K
-    case 83:			// S
-    case 74:			// J
-      player.setDirectionY(0);
       break;
     }
   }

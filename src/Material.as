@@ -10,6 +10,12 @@ public class Material extends Entity
 {
   // group: An array of materials it belongs.
   public var group:Array;
+  // shape:
+  public var shape:int;
+  // raw material color.
+  public var rawcolor:uint;
+  // roasted material color.
+  public var roastedcolor:uint;
 
   // true if roasted.
   private var _roasted:Boolean;
@@ -17,19 +23,16 @@ public class Material extends Entity
   private var _seasoned:Boolean;
   // number of connected components.
   private var _connected:int;
-  // raw material color.
-  private var _rawcolor:uint;
-  // roasted material color.
-  private var _roastedcolor:uint;
 
   // Material(scene, pt)
   public function Material(scene:Scene, 
-			   width:int, height:int,
-			   rawcolor:uint, roastedcolor:uint)
+			   x:int, y:int, width:int, height:int, 
+			   shape:int, rawcolor:uint, roastedcolor:uint)
   {
-    super(scene, new Rectangle(0, 0, width*16, height*16));
-    _rawcolor = rawcolor;
-    _roastedcolor = roastedcolor;
+    super(scene, new Rectangle(x*unit, y*unit, width*unit, height*unit));
+    this.shape = shape;
+    this.rawcolor = rawcolor;
+    this.roastedcolor = roastedcolor;
     updateGraphics();
   }
   
@@ -121,8 +124,18 @@ public class Material extends Entity
   private function updateGraphics():void
   {
     graphics.clear();
-    graphics.beginFill((_roasted)? _roastedcolor : _rawcolor);
-    graphics.drawRect(0, 0, bounds.width, bounds.height);
+    graphics.beginFill((_roasted)? roastedcolor : rawcolor);
+    switch (shape) {
+    case 1:
+      graphics.drawRoundRect(0, 0, bounds.width, bounds.height, 8, 8);
+      break;
+    case 2:
+      graphics.drawEllipse(0, 0, bounds.width, bounds.height);
+      break;
+    default:
+      graphics.drawRect(0, 0, bounds.width, bounds.height);
+      break;
+    }
     graphics.endFill();
     if (_seasoned) {
       var v:int = (917+bounds.width)*(43+bounds.height);

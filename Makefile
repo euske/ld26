@@ -22,5 +22,5 @@ update: $(TARGET)
 	$(SSHON)
 	$(RSYNC) $(TARGET) $(LIVE_URL)
 
-$(TARGET): ./src/*.as
+$(TARGET): ./src/*.as ./assets/*.png ./assets/*.mp3
 	$(AS3COMPILE) -compiler.source-path=$(SRCDIR) -o $@ ./src/Main.as

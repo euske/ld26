@@ -8,6 +8,9 @@ import flash.geom.Point;
 //
 public class Entity extends Sprite
 {
+  // unit size
+  public static const unit:int = 32;
+  
   public var scene:Scene;
   public var bounds:Rectangle;
   public var vx:int, vy:int;

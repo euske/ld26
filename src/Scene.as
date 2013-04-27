@@ -1,6 +1,7 @@
 package {
 
 import flash.display.Sprite;
+import flash.media.Sound;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import Entity;
@@ -12,14 +13,11 @@ import Material;
 public class Scene extends Sprite
 {
   // a list of actors.
-  public var actors:Array = [];
+  public var actors:Array = null;
   // a list of deployed materials.
-  public var materials:Array = [];
+  public var materials:Array = null;
   // a list of factories.
-  public var factories:Array = [];
-
-  // margin
-  public const margin:int = 32;
+  public var factories:Array = null;
 
   // scene size
   private var _scenesize:Point;
@@ -30,6 +28,11 @@ public class Scene extends Sprite
   // plate status (10: full, 0: none)
   private var _plate:int = 0;
 
+  // Switch sound.
+  [Embed(source="../assets/switch.mp3")]
+  private static const SwitchSoundCls:Class;
+  private static const switchsound:Sound = new SwitchSoundCls();
+
   // Scene(width, height)
   public function Scene(width:int, height:int)
   {
@@ -39,10 +42,10 @@ public class Scene extends Sprite
     updatePlate(10);
   }
 
-  // bounds
-  public function get bounds():Rectangle
+  // size
+  public function get size():Point
   {
-    return _window;
+    return _scenesize;
   }
   
   // setCenter(p)
@@ -79,6 +82,74 @@ public class Scene extends Sprite
     return new Point(p.x-_window.x, p.y-_window.y);
   }
 
+  // setLevel(level): changes the current level.
+  public function setLevel(level:int):Player
+  {
+    var player:Player;
+
+    switch (level) {
+    case 0:
+      // tomato
+      addMaterial(new Material(this, 4, 7, 2, 2, 2, 0xff0000, 0xff8800));
+      // cucumber
+      addMaterial(new Material(this, 8, 6, 1, 3, 1, 0x116600, 0x88ff88));
+      player = new Player(this, 7, 3);
+      break;
+
+    default:
+      addFactory(new RoastingFactory(new Rectangle(20, height-20-80, 160, 80),
+					   0xff0000, "ROAST"));
+      addFactory(new SeasoningFactory(new Rectangle(width-20-160, height-20-80, 160, 80),
+					    0x008844, "SEASON"));
+      // cucumber
+      addMaterial(new Material(this, 1, 1, 4, 7, 0, 0x00cc00, 0x88ff00));
+      // tomato
+      addMaterial(new Material(this, 2, 2, 6, 6, 0, 0xff0000, 0xff8800));
+      // beef
+      addMaterial(new Material(this, 3, 3, 5, 5, 0, 0xcc88cc, 0x884444));
+      // pork
+      addMaterial(new Material(this, 4, 4, 7, 3, 0, 0xffcccc, 0xcc8888));
+      // lettuce
+      addMaterial(new Material(this, 5, 5, 7, 7, 0, 0x88ffcc, 0x88ff88));
+      // tofu
+      addMaterial(new Material(this, 6, 6, 5, 5, 0, 0xcccccc, 0xffffcc));
+      // carrot
+      addMaterial(new Material(this, 7, 7, 3, 5, 0, 0xcccc88, 0xcccc88));
+      // chicken
+      // onion
+      // herb?
+      addActor(new Enemy(this, 5, 5));
+      break;
+    }
+
+    addActor(player);
+    setMode(true);
+    return player;
+  }
+
+  // clearLevel(): erase everything in the current level.
+  public function clearLevel():void
+  {
+    if (actors != null) {
+      for each (var actor:Actor in actors) {
+        removeChild(actor);
+      }
+    }
+    actors = new Array();
+    if (materials != null) {
+      for each (var material:Material in materials) {
+	removeChild(material);
+      }
+    }
+    materials = new Array();
+    if (factories != null) {
+      for each (var factory:Factory in materials) {
+	removeChild(factory);
+      }
+    }
+    factories = new Array();
+  }
+
   // addActor(actor)
   public function addActor(actor:Actor):void
   {
@@ -89,15 +160,6 @@ public class Scene extends Sprite
   // addMaterial(material)
   public function addMaterial(material:Material):void
   {
-    var d:int = margin/2;
-    var bounds:Rectangle = material.bounds;
-    var x1:int = (_scenesize.x-margin*2-bounds.width)/d;
-    var y1:int = (_scenesize.y-margin*2-bounds.height)/d;
-    for (;;) {
-      bounds.x = Math.floor(Math.random()*x1)*d+margin;
-      bounds.y = Math.floor(Math.random()*y1)*d+margin;
-      if (!hasMaterialOverlapping(bounds)) break;
-    }
     addChild(material);
     materials.push(material);
   }
@@ -120,7 +182,7 @@ public class Scene extends Sprite
   public function hasMaterialOverlapping(rect:Rectangle):Boolean
   {
     for each (var material:Material in materials) {
-	if (material.bounds.intersects(rect)) return true;
+      if (material.bounds.intersects(rect)) return true;
     }
     return false;
   }
@@ -140,15 +202,23 @@ public class Scene extends Sprite
   // isInsideScreen(rect):
   public function isInsideScreen(rect:Rectangle):Boolean
   {
-    return (margin <= rect.left && rect.right <= _scenesize.x-margin &&
-	    margin <= rect.top && rect.bottom <= _scenesize.y-margin);
+    return (Entity.unit <= rect.left && 
+	    rect.right <= _scenesize.x-Entity.unit &&
+	    Entity.unit <= rect.top && 
+	    rect.bottom <= _scenesize.y-Entity.unit);
   }
 
   // toggleMode()
   public function toggleMode():void
   {
-    _construction = !_construction;
+    setMode(!_construction);
+    switchsound.play()
+  }
 
+  // setMode(construction)
+  public function setMode(construction:Boolean):void
+  {
+    _construction = construction;
     var factory:Factory;
     for each (var actor:Actor in actors) {
       actor.setMode(_construction);
@@ -226,14 +296,15 @@ public class Scene extends Sprite
   {
     if (_plate == plate) return;
     if (_plate < plate) {
-      // bring up immediately.
-      _plate = plate;
+      // bring up.
+      _plate++;
     } else {
-      // falling down slowly.
+      // fold down.
       _plate--;
     }
-    var h:int = (_window.height-margin*2)*_plate/10;
-    var r:Rectangle = new Rectangle(margin, _window.height-h, _window.width-margin*2, h);
+    var h:int = (_window.height-Entity.unit*2)*_plate/10;
+    var r:Rectangle = new Rectangle(Entity.unit, _window.height-h, 
+				    _window.width-Entity.unit*2, h);
     graphics.clear()
     graphics.beginFill(0xffffff);
     graphics.drawEllipse(r.x, r.y, r.width, r.height);
