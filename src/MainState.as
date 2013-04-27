@@ -10,22 +10,11 @@ import GameState;
 import Actor;
 import Scene;
 import Factory;
-//import TileMap;
 
 //  MainState
 //
 public class MainState extends GameState
 {
-  // // Tile image:
-  // [Embed(source="../assets/tiles.png", mimeType="image/png")]
-  // private static const TilesImageCls:Class;
-  // private static const tilesimage:Bitmap = new TilesImageCls();
-
-  // // Map image:
-  // [Embed(source="../assets/map.png", mimeType="image/png")]
-  // private static const MapImageCls:Class;
-  // private static const mapimage:Bitmap = new MapImageCls();
-  
   // Player image:
   [Embed(source="../assets/player.png", mimeType="image/png")]
   private static const PlayerImageCls:Class;
@@ -38,16 +27,16 @@ public class MainState extends GameState
 
   /// Game-related functions
 
-  //private var tilemap:TileMap;
   private var scene:Scene;
   private var player:Actor;
 
   public function MainState(width:int, height:int)
   {
-    //tilemap = new TileMap(mapimage.bitmapData, tilesimage.bitmapData, 32);
     scene = new Scene(width, height);
-    scene.addFactory(new BoilingFactory(new Rectangle(0, 0, 200, 100), 0xff0000, "OVEN"));
-    scene.addFactory(new SeasoningFactory(new Rectangle(400, 0, 200, 100), 0x008844, "SEASONING"));
+    scene.addFactory(new BoilingFactory(new Rectangle(0, 0, 200, 100),
+					0xff0000, "OVEN"));
+    scene.addFactory(new SeasoningFactory(new Rectangle(400, 0, 200, 100),
+					  0x008844, "SEASONING"));
     
     // cucumber
     scene.addMaterial(new Material(scene, 4, 7, 0x00cc00, 0x88ff00));
@@ -74,14 +63,12 @@ public class MainState extends GameState
   // open()
   public override function open():void
   {
-    //addChild(tilemap);
     addChild(scene);
   }
 
   // close()
   public override function close():void
   {
-    //removeChild(tilemap);
     removeChild(scene);
   }
 

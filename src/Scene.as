@@ -3,7 +3,6 @@ package {
 import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-//import TileMap;
 import Entity;
 import Actor;
 import Material;
@@ -12,8 +11,7 @@ import Material;
 // 
 public class Scene extends Sprite
 {
-  //private var _tilemap:TileMap;
-  private var _mapsize:Point;
+  private var _scenesize:Point;
   private var _window:Rectangle;
   private var _mode:int = 0;
 
@@ -24,15 +22,15 @@ public class Scene extends Sprite
   // factories
   public var factories:Array = [];
 
+  public const margin:int = 32;
+
   // Scene(width, height)
   public function Scene(width:int, height:int)
   {
-    //_tilemap = tilemap;
-    //_mapsize = new Point(tilemap.mapwidth*tilemap.tilesize,
-    //tilemap.mapheight*tilemap.tilesize);
-    _mapsize = new Point(width, height);
+    _scenesize = new Point(width, height);
     _window = new Rectangle(0, 0, width, height);
-    
+
+    // Draw a plate.
     graphics.beginFill(0xffffff);
     graphics.drawEllipse(0, 0, width, height);
     graphics.endFill();
@@ -53,12 +51,12 @@ public class Scene extends Sprite
   {
     var d:int = 16;
     var bounds:Rectangle = material.bounds;
-    var x1:int = (_mapsize.x-bounds.width)/d;
-    var y1:int = (_mapsize.y-bounds.height)/d;
+    var x1:int = (_scenesize.x-margin*2-bounds.width)/d;
+    var y1:int = (_scenesize.y-margin*2-bounds.height)/d;
     for (;;) {
-      bounds.x = Math.floor(Math.random()*x1)*d;
-      bounds.y = Math.floor(Math.random()*y1)*d;
-      if (!hasEntityOverlapping(bounds)) break;
+      bounds.x = Math.floor(Math.random()*x1)*d+margin;
+      bounds.y = Math.floor(Math.random()*y1)*d+margin;
+      if (!hasMaterialOverlapping(bounds)) break;
     }
     addChild(material);
     materials.push(material);
@@ -78,25 +76,32 @@ public class Scene extends Sprite
     materials.splice(materials.indexOf(material), 1);
   }
 
-  // hasEntityOverlapping(rect)
-  public function hasEntityOverlapping(rect:Rectangle):Boolean
+  // hasMaterialOverlapping(rect)
+  public function hasMaterialOverlapping(rect:Rectangle):Boolean
   {
-    for each (var entity:Entity in materials) {
-	if (entity.bounds.intersects(rect)) return true;
+    for each (var material:Material in materials) {
+	if (material.bounds.intersects(rect)) return true;
     }
     return false;
   }
 
-  // getOverlappingEntities(rect)
-  public function getOverlappingEntities(rect:Rectangle):Array
+  // getOverlappingMaterials(rect)
+  public function getOverlappingMaterials(rect:Rectangle):Array
   {
     var contacts:Array = new Array();
-    for each (var entity:Entity in materials) {
-      if (entity.bounds.intersects(rect)) {
-	contacts.push(entity);
+    for each (var material:Material in materials) {
+      if (material.bounds.intersects(rect)) {
+	contacts.push(material);
       }
     }
     return contacts;
+  }
+
+  // isInsideScreen(rect):
+  public function isInsideScreen(rect:Rectangle):Boolean
+  {
+    return (margin <= rect.left && rect.right <= _scenesize.x-margin &&
+	    margin <= rect.top && rect.bottom <= _scenesize.y-margin);
   }
 
   // toggleMode()
@@ -111,32 +116,32 @@ public class Scene extends Sprite
   // update()
   public function update():void
   {
-    var entity:Entity;
-    for each (entity in materials) {
-      entity.clearForce();
-      entity.clearConnection();
+    var material:Material;
+    for each (material in materials) {
+      material.clearForce();
+      material.clearConnection();
     }
-    for each (entity in materials) {
-       for each (var entity2:Entity in materials) {
-	  if (entity.hasContact(entity2)) {
-	    entity.connectEntity(entity2);
+    for each (material in materials) {
+       for each (var m:Material in materials) {
+	  if (material.hasContact(m)) {
+	    material.connectTo(m);
 	  }
 	}
     }
     var groups:Array = new Array();
-    for each (entity in materials) {
-	if (entity.group != null && groups.indexOf(entity.group) == -1) {
-	  groups.push(entity.group);
+    for each (material in materials) {
+	if (material.group != null && groups.indexOf(material.group) == -1) {
+	  groups.push(material.group);
 	}
       }
     for each (var actor:Actor in actors) {
       actor.update();
     }
-    for each (entity in materials) {
-      entity.update();
+    for each (material in materials) {
+      material.update();
       for each (var factory:Factory in factories) {
-	  if (factory.canAcceptEntity(entity)) {
-	    factory.putEntity(entity);
+	  if (factory.canAcceptMaterial(material)) {
+	    factory.putMaterial(material);
 	  }
       }
     }
@@ -148,10 +153,9 @@ public class Scene extends Sprite
     for each (var actor:Actor in actors) {
       actor.repaint();
     }
-    for each (var entity:Entity in materials) {
-      entity.repaint();
+    for each (var material:Material in materials) {
+      material.repaint();
     }
-    //_tilemap.repaint(_window);
   }
 
   // setCenter(p)
@@ -172,13 +176,13 @@ public class Scene extends Sprite
     // Adjust the window position to fit the world.
     if (_window.x < 0) {
       _window.x = 0;
-    } else if (_mapsize.x < _window.x+_window.width) {
-      _window.x = _mapsize.x-_window.width;
+    } else if (_scenesize.x < _window.x+_window.width) {
+      _window.x = _scenesize.x-_window.width;
     }
     if (_window.y < 0) {
       _window.y = 0;
-    } else if (_mapsize.y < _window.y+_window.height) {
-      _window.y = _mapsize.y-_window.height;
+    } else if (_scenesize.y < _window.y+_window.height) {
+      _window.y = _scenesize.y-_window.height;
     }
   }
 

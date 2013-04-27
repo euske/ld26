@@ -8,10 +8,18 @@ import flash.geom.Point;
 //
 public class Material extends Entity
 {
+  // group: An array of materials it belongs.
+  public var group:Array;
+
+  // true if boiled.
   private var _boiled:Boolean;
+  // true if seasoned.
   private var _seasoned:Boolean;
-  private var _highlight:int;
+  // number of connected components.
+  private var _connected:int;
+  // raw material color.
   private var _rawcolor:uint;
+  // boiled material color.
   private var _boiledcolor:uint;
 
   // Material(scene, pt)
@@ -22,32 +30,95 @@ public class Material extends Entity
     super(scene, new Rectangle(0, 0, width*16, height*16));
     _rawcolor = rawcolor;
     _boiledcolor = boiledcolor;
-    updateState();
+    updateGraphics();
   }
   
-  public override function boil():void
+  // clearForce(): clear forces.
+  public function clearForce():void
   {
-    _boiled = true;
-    updateState();
-  }
-  
-  public override function season():void
-  {
-    _seasoned = true;
-    updateState();
+    vx = 0;
+    vy = 0;
   }
 
+  // applyForce(dx, dy): apply forces, returns true if it's movable.
+  public function applyForce(dx:int, dy:int):Boolean
+  {
+    var r:Rectangle = getOffsetRect(dx, dy);
+    if (vx != 0 || vy != 0) return false;
+    if (!scene.isInsideScreen(r)) return false;
+    for each (var material:Material in scene.getOverlappingMaterials(r)) {
+      if (material != this) {
+	if (!material.applyForce(dx, dy)) return false;
+      }
+    }
+    vx = dx;
+    vy = dy;
+    return true;
+  }
+
+  // clearConnection(): clear connections.
+  public function clearConnection():void
+  {
+    this.group = null;
+  }
+
+  // connectTo(material): connect two materials.
+  public function connectTo(material:Material):void
+  {
+    if (this.group == null) {
+      if (material.group != null) {
+	this.group = material.group;
+	this.group.push(this);
+      } else {
+	// this.group == null, material.group == null
+	var a:Array = new Array();
+	a.push(this);
+	this.group = a;
+	a.push(material);
+	material.group = a;
+      }
+    } else {
+      if (material.group == null) {
+	material.group = this.group;
+	material.group.push(material);
+      } else {
+	// this.group != null, material.group != null
+	material.group.concat(this.group);
+	for each (var m:Material in this.group) {
+	  m.group = material.group;
+	}
+      }
+    }
+  }
+
+  // boil()
+  public function boil():void
+  {
+    _boiled = true;
+    updateGraphics();
+  }
+
+  // season()
+  public function season():void
+  {
+    _seasoned = true;
+    updateGraphics();
+  }
+
+  // update()
   public override function update():void
   {
     super.update();
-    var highlight:int = (this.group == null)? 0 : this.group.length;
-    if (_highlight != highlight) {
-      _highlight = highlight;
-      updateState();
+    var connected:int = (this.group == null)? 0 : this.group.length;
+    if (_connected != connected) {
+      _connected = connected;
+      Main.log("connected:"+connected);
+      updateGraphics();
     }
   }
-  
-  private function updateState():void
+
+  // updateGraphics()
+  private function updateGraphics():void
   {
     graphics.clear();
     graphics.beginFill((_boiled)? _boiledcolor : _rawcolor);
@@ -65,7 +136,7 @@ public class Material extends Entity
 	graphics.endFill();
       }
     }
-    switch (_highlight) {
+    switch (_connected) {
     case 0:
     case 1:
       break;

@@ -12,10 +12,11 @@ public class BoilingFactory extends Factory
     super(bounds, color, name);
   }
     
-  public override function putEntity(entity:Entity):void
+  // putMaterial(material): makes the material boiled.
+  public override function putMaterial(material:Material):void
   {
-    super.putEntity(entity);
-    entity.boil();
+    super.putMaterial(material);
+    material.boil();
   }
 }
 

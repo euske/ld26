@@ -9,7 +9,7 @@ import flash.geom.Point;
 public class Factory extends Sprite
 {
   private var _bounds:Rectangle;
-  private var _entities:Array = [];
+  private var _materials:Array = [];
   
   public function Factory(bounds:Rectangle, color:uint, name:String)
   {
@@ -24,15 +24,17 @@ public class Factory extends Sprite
     _bounds = bounds;
   }
     
-  public function canAcceptEntity(entity:Entity):Boolean
+  // canAcceptMaterial(material): returns true if it can accept the material.
+  public function canAcceptMaterial(material:Material):Boolean
   {
-    return (_bounds.intersects(entity.bounds) &&
-	    _entities.indexOf(entity) == -1);
+    return (_bounds.intersects(material.bounds) &&
+	    _materials.indexOf(material) == -1);
   }
 
-  public virtual function putEntity(entity:Entity):void
+  // putMaterial(material): put the material into "in" state and make some change.
+  public virtual function putMaterial(material:Material):void
   {
-    _entities.push(entity);
+    _materials.push(material);
   }
 }
 

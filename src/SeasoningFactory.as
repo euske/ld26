@@ -11,11 +11,12 @@ public class SeasoningFactory extends Factory
   {
     super(bounds, color, name);
   }
-    
-  public override function putEntity(entity:Entity):void
+
+  // putMaterial(material): makes the material seasoned.
+  public override function putMaterial(material:Material):void
   {
-    super.putEntity(entity);
-    entity.season();
+    super.putMaterial(material);
+    material.season();
   }
 }
 
