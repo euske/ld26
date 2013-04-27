@@ -11,6 +11,7 @@ public class Entity extends Sprite
   public var scene:Scene;
   public var bounds:Rectangle;
   public var vx:int, vy:int;
+  public var group:Array;
 
   // Entity(scene, rect)
   public function Entity(scene:Scene, bounds:Rectangle)
@@ -46,6 +47,50 @@ public class Entity extends Sprite
     this.vx = vx;
     this.vy = vy;
     return true;
+  }
+
+  // hasContact(entity)
+  public function hasContact(entity:Entity):Boolean
+  {
+    return (((bounds.left == entity.bounds.right ||
+	      bounds.right == entity.bounds.left) &&
+	     !(entity.bounds.bottom <= bounds.top ||
+	       bounds.bottom <= entity.bounds.top)) ||
+	    ((bounds.top == entity.bounds.bottom ||
+	      bounds.bottom == entity.bounds.top) &&
+	     !(entity.bounds.right <= bounds.left ||
+	       bounds.right <= entity.bounds.left)));
+  }
+
+  // clearConnection(): clear connections.
+  public function clearConnection():void
+  {
+    this.group = null;
+  }
+
+  // connectEntity(entity): connect two entities.
+  public function connectEntity(entity:Entity):void
+  {
+    if (this.group == null) {
+      if (entity.group != null) {
+	this.group = entity.group;
+	this.group.push(this);
+      } else {
+	var a:Array = [ this, entity ];
+	this.group = a;
+	entity.group = a;
+      }
+    } else {
+      if (entity.group == null) {
+	entity.group = this.group;
+	entity.group.push(entity);
+      } else {
+	// this.group != null, entity.group != null
+	for each (var e:Entity in this.group) {
+	  e.group = entity.group;
+	}
+      }
+    }
   }
 
   // update()

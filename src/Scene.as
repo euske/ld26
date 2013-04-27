@@ -103,8 +103,23 @@ public class Scene extends Sprite
   {
     var entity:Entity;
     for each (entity in materials) {
-	entity.clearForce();
+      entity.clearForce();
+      entity.clearConnection();
     }
+    for each (entity in materials) {
+       for each (var entity2:Entity in materials) {
+	  if (entity.hasContact(entity2)) {
+	    entity.connectEntity(entity2);
+	  }
+	}
+    }
+    var groups:Array = new Array();
+    for each (entity in materials) {
+	if (entity.group != null && groups.indexOf(entity.group) == -1) {
+	  groups.push(entity.group);
+	}
+      }
+    Main.log("groups:"+groups.length);
     for each (var actor:Actor in actors) {
       actor.update();
     }
