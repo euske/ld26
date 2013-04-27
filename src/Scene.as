@@ -36,7 +36,6 @@ public class Scene extends Sprite
     graphics.endFill();
     graphics.lineStyle(4, 0x000000);
     graphics.drawEllipse(width/8, height/8, width*3/4, height*3/4);
-    
   }
 
   // addActor(actor)

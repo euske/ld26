@@ -1,6 +1,7 @@
 package {
 
 import flash.display.Sprite;
+import flash.display.Bitmap;
 import flash.geom.Rectangle;
 import flash.geom.Point;
 
@@ -8,19 +9,24 @@ import flash.geom.Point;
 //
 public class Factory extends Sprite
 {
+  // bounds:
   private var _bounds:Rectangle;
+  // Materials it is processing.
   private var _materials:Array = [];
   
   public function Factory(bounds:Rectangle, color:uint, name:String)
   {
+    var text:Bitmap = Main.Font.render(name, 0x000000, 2);
+    addChild(text);
+    text.x = (bounds.width-text.width)/2;
+    text.y = (bounds.height-text.height)/2;
     graphics.beginFill(0xffffff);
     graphics.drawRect(0, 0, bounds.width, bounds.height);
     graphics.endFill();
     graphics.lineStyle(4, color);
-    graphics.drawRect(0, 0, bounds.width, bounds.height);
+    graphics.drawRect(8, 8, bounds.width-16, bounds.height-16);
     x = bounds.x;
     y = bounds.y;
-    addChild(Main.Font.render(name, 0x000000, 2));
     _bounds = bounds;
   }
     

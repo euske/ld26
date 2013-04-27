@@ -33,10 +33,10 @@ public class MainState extends GameState
   public function MainState(width:int, height:int)
   {
     scene = new Scene(width, height);
-    scene.addFactory(new RoastingFactory(new Rectangle(0, 0, 200, 100),
+    scene.addFactory(new RoastingFactory(new Rectangle(20, height-20-80, 160, 80),
 					 0xff0000, "ROAST"));
-    scene.addFactory(new SeasoningFactory(new Rectangle(400, 0, 200, 100),
-					  0x008844, "SEASONING"));
+    scene.addFactory(new SeasoningFactory(new Rectangle(width-20-160, height-20-80, 160, 80),
+					  0x008844, "SEASON"));
     
     // cucumber
     scene.addMaterial(new Material(scene, 4, 7, 0x00cc00, 0x88ff00));
