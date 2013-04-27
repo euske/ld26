@@ -1,48 +1,60 @@
 package {
 
-import flash.display.Sprite;
 import flash.display.Bitmap;
 import flash.events.Event;
+import flash.geom.Rectangle;
 import flash.geom.Point;
 
 //  Actor
 //
-public class Actor extends Sprite
+public class Actor extends Entity
 {
-  public var scene:Scene;
   public var skin:Bitmap;
-  public var pos:Point;
-  public var vx:int, vy:int;
+  public var dx:int, dy:int;
 
   // Actor(scene, image)
   public function Actor(scene:Scene, skin:Bitmap)
   {
-    this.scene = scene;
+    var rect:Rectangle = new Rectangle(skin.x, skin.y, skin.width, skin.height);
+    super(scene, rect);
     this.skin = skin;
-    this.pos = new Point(0, 0);
     addChild(this.skin);
   }
 
-  // move(vx, vy)
-  public function move(vx:int, vy:int):void
+  // setDirection(dx, dy)
+  public function setDirection(dx:int, dy:int):void
   {
-    this.vx = vx;
-    this.vy = vy;
+    this.dx = dx*8;
+    this.dy = dy*8;
   }
 
-  // update()
-  public virtual function update():void
+  // preupdate()
+  public function preupdate():void
   {
-    pos.x += vx;
-    pos.y += vy;
-  }
-
-  // repaint()
-  public virtual function repaint():void
-  {
-    var p:Point = scene.translatePoint(pos);
-    this.x = p.x;
-    this.y = p.y;
+    var entity:Entity;
+    for each (entity in scene.entities) {
+	entity.clearForce();
+    }
+    var allowed:Boolean = true;
+    var contacts:Array = getContacts(dx, dy);
+    for each (entity in contacts) {
+      if (entity != this) {
+	if (!entity.applyForce(dx, dy)) {
+	  allowed = false;
+	  break;
+	}
+      }
+    }
+    if (allowed) {
+      vx = dx;
+      vy = dy;
+    } else {
+      vx = 0;
+      vy = 0;
+      for each (entity in contacts) {
+	  entity.clearForce();
+	}
+    }
   }
 }
 

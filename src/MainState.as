@@ -4,6 +4,8 @@ import flash.display.Bitmap;
 import flash.events.Event;
 import flash.media.Sound;
 import flash.ui.Keyboard;
+import flash.geom.Rectangle;
+import flash.geom.Point;
 import GameState;
 import Actor;
 import Scene;
@@ -35,8 +37,8 @@ public class MainState extends GameState
 
   /// Game-related functions
 
-  private var scene:Scene;
   private var tilemap:TileMap;
+  private var scene:Scene;
   private var player:Actor;
 
   public function MainState(width:int, height:int)
@@ -45,6 +47,13 @@ public class MainState extends GameState
     scene = new Scene(width, height, tilemap);
     player = new Actor(scene, playerimage);
     scene.add(player);
+
+    for (var i:int = 0; i < 10; i++) {
+      var p:Point = new Point(Math.floor(Math.random()*20)*32, 
+			      Math.floor(Math.random()*20)*32);
+      var thing1:Entity = new Material(scene, p);
+      scene.add(thing1);
+    }
   }
 
   // open()
@@ -64,6 +73,7 @@ public class MainState extends GameState
   // update()
   public override function update():void
   {
+    player.preupdate();
     scene.update();
     scene.repaint();
   }
@@ -75,25 +85,25 @@ public class MainState extends GameState
     case Keyboard.LEFT:
     case 65:			// A
     case 72:			// H
-      player.move(-1, 0);
+      player.setDirection(-1, 0);
       break;
 
     case Keyboard.RIGHT:
     case 68:			// D
     case 76:			// L
-      player.move(+1, 0);
+      player.setDirection(+1, 0);
       break;
 
     case Keyboard.UP:
     case 87:			// W
     case 75:			// K
-      player.move(0, -1);
+      player.setDirection(0, -1);
       break;
 
     case Keyboard.DOWN:
     case 83:			// S
     case 74:			// J
-      player.move(0, +1);
+      player.setDirection(0, +1);
       break;
 
     case Keyboard.SPACE:
@@ -117,7 +127,7 @@ public class MainState extends GameState
     case 68:			// D
     case 72:			// H
     case 76:			// L
-      player.move(0, 0);
+      player.setDirection(0, 0);
       break;
 
     case Keyboard.UP:
@@ -126,7 +136,7 @@ public class MainState extends GameState
     case 75:			// K
     case 83:			// S
     case 74:			// J
-      player.move(0, 0);
+      player.setDirection(0, 0);
       break;
     }
   }

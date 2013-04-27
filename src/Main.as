@@ -144,7 +144,7 @@ public class Main extends Sprite
 
   protected function init():void
   {
-    setGameState(new TitleState(stage.stageWidth, stage.stageHeight));
+    setGameState(new MainState(stage.stageWidth, stage.stageHeight));
   }
 
 }

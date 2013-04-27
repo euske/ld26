@@ -4,7 +4,7 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import TileMap;
-import Actor;
+import Entity;
 
 //  Scene
 // 
@@ -14,8 +14,8 @@ public class Scene extends Sprite
   private var _window:Rectangle;
   private var _mapsize:Point;
 
-  // actors
-  public var actors:Array = [];
+  // entities
+  public var entities:Array = [];
 
   // Scene(width, height, tilemap)
   public function Scene(width:int, height:int, tilemap:TileMap)
@@ -26,33 +26,45 @@ public class Scene extends Sprite
 			 tilemap.mapheight*tilemap.tilesize);
   }
 
-  // add(actor)
-  public function add(actor:Actor):void
+  // add(entity)
+  public function add(entity:Entity):void
   {
-    addChild(actor);
-    actors.push(actor);
+    addChild(entity);
+    entities.push(entity);
   }
 
-  // remove(actor)
-  public function remove(actor:Actor):void
+  // remove(entity)
+  public function remove(entity:Entity):void
   {
-    removeChild(actor);
-    actors.splice(actors.indexOf(actor), 1);
+    removeChild(entity);
+    entities.splice(entities.indexOf(entity), 1);
+  }
+
+  // getContacts(rect)
+  public function getContacts(rect:Rectangle):Array
+  {
+    var contacts:Array = new Array();
+    for each (var entity:Entity in entities) {
+      if (entity.bounds.intersects(rect)) {
+	contacts.push(entity);
+      }
+    }
+    return contacts;
   }
 
   // update()
   public function update():void
   {
-    for each (var actor:Actor in actors) {
-      actor.update();
+    for each (var entity:Entity in entities) {
+      entity.update();
     }
   }
 
   // repaint()
   public function repaint():void
   {
-    for each (var actor:Actor in actors) {
-      actor.repaint();
+    for each (var entity:Entity in entities) {
+      entity.repaint();
     }
     _tilemap.repaint(_window);
   }
