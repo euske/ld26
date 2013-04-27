@@ -33,8 +33,8 @@ public class MainState extends GameState
   public function MainState(width:int, height:int)
   {
     scene = new Scene(width, height);
-    scene.addFactory(new BoilingFactory(new Rectangle(0, 0, 200, 100),
-					0xff0000, "OVEN"));
+    scene.addFactory(new RoastingFactory(new Rectangle(0, 0, 200, 100),
+					 0xff0000, "ROAST"));
     scene.addFactory(new SeasoningFactory(new Rectangle(400, 0, 200, 100),
 					  0x008844, "SEASONING"));
     

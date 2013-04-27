@@ -11,25 +11,25 @@ public class Material extends Entity
   // group: An array of materials it belongs.
   public var group:Array;
 
-  // true if boiled.
-  private var _boiled:Boolean;
+  // true if roasted.
+  private var _roasted:Boolean;
   // true if seasoned.
   private var _seasoned:Boolean;
   // number of connected components.
   private var _connected:int;
   // raw material color.
   private var _rawcolor:uint;
-  // boiled material color.
-  private var _boiledcolor:uint;
+  // roasted material color.
+  private var _roastedcolor:uint;
 
   // Material(scene, pt)
   public function Material(scene:Scene, 
 			   width:int, height:int,
-			   rawcolor:uint, boiledcolor:uint)
+			   rawcolor:uint, roastedcolor:uint)
   {
     super(scene, new Rectangle(0, 0, width*16, height*16));
     _rawcolor = rawcolor;
-    _boiledcolor = boiledcolor;
+    _roastedcolor = roastedcolor;
     updateGraphics();
   }
   
@@ -91,10 +91,10 @@ public class Material extends Entity
     }
   }
 
-  // boil()
-  public function boil():void
+  // roast()
+  public function roast():void
   {
-    _boiled = true;
+    _roasted = true;
     updateGraphics();
   }
 
@@ -121,7 +121,7 @@ public class Material extends Entity
   private function updateGraphics():void
   {
     graphics.clear();
-    graphics.beginFill((_boiled)? _boiledcolor : _rawcolor);
+    graphics.beginFill((_roasted)? _roastedcolor : _rawcolor);
     graphics.drawRect(0, 0, bounds.width, bounds.height);
     graphics.endFill();
     if (_seasoned) {
