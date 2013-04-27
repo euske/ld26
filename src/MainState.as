@@ -124,8 +124,7 @@ public class MainState extends GameState
     case Keyboard.ENTER:
     case 88:			// X
     case 90:			// Z
-      jump.play();
-      Main.log("foo");
+      scene.toggleMode();
       break;
 
     }

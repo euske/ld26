@@ -20,12 +20,18 @@ public class Entity extends Sprite
     this.bounds = bounds;
   }
 
-  // getContacts(vx, vy): returns a list of Entities that would contact.
-  public function getContacts(vx:int, vy:int):Array
+  // getOffsetRect(vx, vy): returns an offset rectangle.
+  public function getOffsetRect(vx:int, vy:int):Rectangle
   {
     var r:Rectangle = bounds.clone();
     r.offset(vx, vy);
-    return scene.getContacts(r);
+    return r;
+  }
+
+  // getOverlappingEntities(vx, vy): returns a list of overlapping Entities.
+  public function getOverlappingEntities(vx:int, vy:int):Array
+  {
+    return scene.getOverlappingEntities(getOffsetRect(vx, vy));
   }
 
   // clearForce(): clear forces.
@@ -39,7 +45,7 @@ public class Entity extends Sprite
   public function applyForce(vx:int, vy:int):Boolean
   {
     if (this.vx != 0 || this.vy != 0) return false;
-    for each (var entity:Entity in getContacts(vx, vy)) {
+    for each (var entity:Entity in getOverlappingEntities(vx, vy)) {
       if (entity != this) {
 	if (!entity.applyForce(vx, vy)) return false;
       }

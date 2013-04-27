@@ -15,6 +15,7 @@ public class Scene extends Sprite
   //private var _tilemap:TileMap;
   private var _mapsize:Point;
   private var _window:Rectangle;
+  private var _mode:int = 0;
 
   // actors
   public var actors:Array = [];
@@ -86,8 +87,8 @@ public class Scene extends Sprite
     return false;
   }
 
-  // getContacts(rect)
-  public function getContacts(rect:Rectangle):Array
+  // getOverlappingEntities(rect)
+  public function getOverlappingEntities(rect:Rectangle):Array
   {
     var contacts:Array = new Array();
     for each (var entity:Entity in materials) {
@@ -96,6 +97,15 @@ public class Scene extends Sprite
       }
     }
     return contacts;
+  }
+
+  // toggleMode()
+  public function toggleMode():void
+  {
+    _mode = 1-_mode;
+    for each (var actor:Actor in actors) {
+      actor.setMode(_mode);
+    }
   }
 
   // update()
@@ -119,7 +129,6 @@ public class Scene extends Sprite
 	  groups.push(entity.group);
 	}
       }
-    Main.log("groups:"+groups.length);
     for each (var actor:Actor in actors) {
       actor.update();
     }

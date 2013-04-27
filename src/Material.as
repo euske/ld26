@@ -43,7 +43,7 @@ public class Material extends Entity
     var highlight:int = (this.group == null)? 0 : this.group.length;
     if (_highlight != highlight) {
       _highlight = highlight;
-      Main.log("highlight:"+highlight);
+      //Main.log("highlight:"+highlight);
       updateState();
     }
   }
