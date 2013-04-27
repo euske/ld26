@@ -43,7 +43,6 @@ public class Material extends Entity
     var highlight:int = (this.group == null)? 0 : this.group.length;
     if (_highlight != highlight) {
       _highlight = highlight;
-      //Main.log("highlight:"+highlight);
       updateState();
     }
   }
@@ -67,6 +66,9 @@ public class Material extends Entity
       }
     }
     switch (_highlight) {
+    case 0:
+    case 1:
+      break;
     case 2:
       graphics.lineStyle(2, 0xffff00);
       graphics.drawRect(0, 0, bounds.width, bounds.height);
@@ -75,11 +77,9 @@ public class Material extends Entity
       graphics.lineStyle(4, 0xff8800);
       graphics.drawRect(0, 0, bounds.width, bounds.height);
       break;
-    case 4:
+    default:
       graphics.lineStyle(4, 0xcc0000);
       graphics.drawRect(0, 0, bounds.width, bounds.height);
-      break;
-    default:
       break;
     }
   }

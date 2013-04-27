@@ -82,6 +82,7 @@ public class Entity extends Sprite
 	this.group = entity.group;
 	this.group.push(this);
       } else {
+	// this.group == null, entity.group == null
 	var a:Array = [ this, entity ];
 	this.group = a;
 	entity.group = a;
@@ -92,6 +93,7 @@ public class Entity extends Sprite
 	entity.group.push(entity);
       } else {
 	// this.group != null, entity.group != null
+	entity.group.concat(this.group);
 	for each (var e:Entity in this.group) {
 	  e.group = entity.group;
 	}
