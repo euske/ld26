@@ -209,6 +209,10 @@ public class Material extends Entity
       break;
     }
     graphics.endFill();
+    if (shape == 3) {
+      graphics.lineStyle(1, 0x888888);
+      graphics.drawRect(0, 0, bounds.width, bounds.height);      
+    }
     if (_seasoned) {
       var v:int = (917+bounds.width)*(43+bounds.height);
       for (var i:int = 0; i < 10; i++) {

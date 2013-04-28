@@ -144,7 +144,8 @@ public class Scene extends Sprite
       // cucumber
       addEntity(new Material(this, 13, 7, 1, 3, 1, false, 0x116600));
       // pork
-      addEntity(new Material(this, 6, 10, 3, 2, 0, false, 0xffaacc, 0xffccee));
+      addEntity(new Material(this, 6, 10, 3, 2, 1, false, 0xffaacc, 0xffccee));
+      // platform
       addPlatform(0, 10, 18, 10);
       player = new Player(this, 7, 3);
       break;
@@ -157,16 +158,28 @@ public class Scene extends Sprite
       // cucumber
       addEntity(new Material(this, 7, 10, 1, 3, 1, false, 0x116600));
       // pork
-      addEntity(new Material(this, 12, 8, 3, 2, 0, false, 0xffaacc, 0xffccee));
+      addEntity(new Material(this, 12, 8, 3, 2, 1, false, 0xffaacc, 0xffccee));
       // fish
-      addEntity(new Material(this, 6, 6, 3, 1, 0, true, 0x44aacc));
+      addEntity(new Material(this, 6, 6, 3, 1, 2, true, 0x44aacc));
+      // platform
       addPlatform(0, 7, 18, 10);
       player = new Player(this, 7, 3);
       break;
 
-      //case 4:
+    case 4:
+      _platesize = new Point(500, 400);
       updateCaption("ENEMY IS ANNOYING.");
+      // pork
+      addEntity(new Material(this, 7, 6, 3, 2, 1, false, 0xffaacc, 0xffccee));
+      // cucumber
+      addEntity(new Material(this, 13, 7, 1, 3, 1, false, 0x116600));
+      // tofu
+      addEntity(new Material(this, 6, 10, 2, 2, 3, false, 0xffffcc));
       // enemy
+      addActor(new Enemy(this, 5, 5));
+      // platform
+      addPlatform(0, 7, 18, 10);
+      player = new Player(this, 7, 3);
       break;
 
       //case 5:
@@ -185,8 +198,6 @@ public class Scene extends Sprite
       //addEntity(new Material(this, 5, 10, 3, 3, 0, 0xcc88cc, 0x884444));
       // pork
       //addEntity(new Material(this, 4, 4, 7, 3, 0, 0xffcccc, 0xcc8888));
-      // lettuce
-      //addEntity(new Material(this, 5, 5, 7, 7, 0, 0x88ffcc, 0x88ff88));
       // tofu
       //addEntity(new Material(this, 6, 6, 5, 5, 0, 0xcccccc, 0xffffcc));
       // carrot

@@ -14,7 +14,7 @@ public class Enemy extends Actor
   {
     super(scene, x, y);
 
-    graphics.beginFill(0xff8800)
+    graphics.beginFill(0x444444);
     graphics.drawRect(0, 0, unit, unit);
     graphics.endFill();
   }
