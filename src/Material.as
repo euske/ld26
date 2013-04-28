@@ -22,6 +22,8 @@ public class Material extends Entity
   private var _roasted:Boolean;
   // true if seasoned.
   private var _seasoned:Boolean;
+  // glow
+  private var _glow:Glow;
 
   // Connected sound.
   [Embed(source="../assets/connected.mp3")]
@@ -37,6 +39,8 @@ public class Material extends Entity
     this.shape = shape;
     this.rawcolor = rawcolor;
     this.roastedcolor = roastedcolor;
+    _glow = new Glow(bounds.width, bounds.height);
+    addChild(_glow);
     updateGraphics();
   }
 
@@ -52,7 +56,7 @@ public class Material extends Entity
   {
     var r:Rectangle = getOffsetRect(dx, dy);
     if (vx != 0 || vy != 0) return false;
-    if (!scene.isInsideScreen(r)) return false;
+    if (!scene.isInsidePlate(r)) return false;
     for each (var material:Material in scene.getOverlappingMaterials(r)) {
       if (material != this) {
 	if (!material.applyForce(dx, dy)) return false;
@@ -109,7 +113,6 @@ public class Material extends Entity
     }
     if (_strength != strength) {
       _strength = strength;
-      Main.log("strength:"+strength);
       updateGraphics();
     }
   }
@@ -132,6 +135,18 @@ public class Material extends Entity
   {
     _seasoned = true;
     updateGraphics();
+  }
+
+  // blinking status.
+  private var _blink:int;
+  private static const cycle:int = 10;
+
+  public override function update():void
+  {
+    super.update();
+    _blink++;
+    var phase:int = (_blink % (cycle*2));
+    _glow.alpha = ((phase < cycle)? (cycle-phase) : (phase-cycle))/(cycle-1);
   }
 
   // updateGraphics()
@@ -163,24 +178,45 @@ public class Material extends Entity
 	graphics.endFill();
       }
     }
+    _glow.setStrength(strength);
+  }
+}
+
+} // package
+
+import flash.display.Shape;
+
+class Glow extends Shape
+{
+  private var _width:int;
+  private var _height:int;
+
+  public function Glow(width:int, height:int)
+  {
+    _width = width;
+    _height = height;
+  }
+
+  public function setStrength(strength:int):void
+  {
+    graphics.clear();
     switch (strength) {
     case 0:
     case 1:
       break;
     case 2:
       graphics.lineStyle(2, 0xffff00);
-      graphics.drawRect(0, 0, bounds.width, bounds.height);
+      graphics.drawRect(0, 0, _width, _height);
       break;
     case 3:
       graphics.lineStyle(4, 0xff8800);
-      graphics.drawRect(0, 0, bounds.width, bounds.height);
+      graphics.drawRect(0, 0, _width, _height);
       break;
     default:
       graphics.lineStyle(4, 0xcc0000);
-      graphics.drawRect(0, 0, bounds.width, bounds.height);
+      graphics.drawRect(0, 0, _width, _height);
       break;
     }
   }
 }
 
-} // package

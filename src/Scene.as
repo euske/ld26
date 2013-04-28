@@ -1,6 +1,7 @@
 package {
 
 import flash.display.Sprite;
+import flash.display.Bitmap;
 import flash.media.Sound;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -20,10 +21,12 @@ public class Scene extends Sprite
   public var factories:Array = null;
 
   // scene size
-  private var _scenesize:Point;
+  private var _size:Point;
   // view
   private var _window:Rectangle;
-  // construction
+  // caption
+  private var _caption:Bitmap;
+  // construction mode
   private var _construction:Boolean = true;
   // plate status (10: full, 0: none)
   private var _plate:int = 0;
@@ -41,7 +44,7 @@ public class Scene extends Sprite
   // Scene(width, height)
   public function Scene(width:int, height:int)
   {
-    _scenesize = new Point(width, height);
+    _size = new Point(width, height);
     _window = new Rectangle(0, 0, width, height);
 
     updateGraphics(maxplate);
@@ -50,7 +53,7 @@ public class Scene extends Sprite
   // size
   public function get size():Point
   {
-    return _scenesize;
+    return _size;
   }
   
   // setCenter(p)
@@ -71,13 +74,13 @@ public class Scene extends Sprite
     // Adjust the window position to fit the world.
     if (_window.x < 0) {
       _window.x = 0;
-    } else if (_scenesize.x < _window.x+_window.width) {
-      _window.x = _scenesize.x-_window.width;
+    } else if (_size.x < _window.x+_window.width) {
+      _window.x = _size.x-_window.width;
     }
     if (_window.y < 0) {
       _window.y = 0;
-    } else if (_scenesize.y < _window.y+_window.height) {
-      _window.y = _scenesize.y-_window.height;
+    } else if (_size.y < _window.y+_window.height) {
+      _window.y = _size.y-_window.height;
     }
   }
 
@@ -98,6 +101,9 @@ public class Scene extends Sprite
       addMaterial(new Material(this, 4, 7, 2, 2, 2, 0xff0000, 0xff8800));
       // cucumber
       addMaterial(new Material(this, 8, 6, 1, 3, 1, 0x116600, 0x88ff88));
+      // platform
+      setPlatform(0, 10, 18, 10);
+      updateCaption("MOVE MATERIALS AND\nHOP ONTO THE PLATFORM.");
       player = new Player(this, 7, 3);
       break;
 
@@ -122,7 +128,7 @@ public class Scene extends Sprite
       //addMaterial(new Material(this, 6, 6, 5, 5, 0, 0xcccccc, 0xffffcc));
       // carrot
       //addMaterial(new Material(this, 7, 7, 3, 5, 0, 0xcccc88, 0xcccc88));
-      //addActor(new Enemy(this, 5, 5));
+      addActor(new Enemy(this, 5, 5));
       player = new Player(this, 7, 3);
       break;
     }
@@ -176,20 +182,11 @@ public class Scene extends Sprite
     factories.push(factory);
   }
 
-  // removeMaterial(material)
-  public function removeMaterial(material:Material):void
+  // hasOverlappingPlatforms(rect)
+  public function hasOverlappingPlatforms(rect:Rectangle):Boolean
   {
-    removeChild(material);
-    materials.splice(materials.indexOf(material), 1);
-  }
-
-  // hasMaterialOverlapping(rect)
-  public function hasMaterialOverlapping(rect:Rectangle):Boolean
-  {
-    for each (var material:Material in materials) {
-      if (material.bounds.intersects(rect)) return true;
-    }
-    return false;
+    return (_start.bounds.intersects(rect) ||
+	    _goal.bounds.intersects(rect));
   }
 
   // getOverlappingMaterials(rect)
@@ -207,10 +204,34 @@ public class Scene extends Sprite
   // isInsideScreen(rect):
   public function isInsideScreen(rect:Rectangle):Boolean
   {
+    return (0 <= rect.left && rect.right <= _size.x &&
+	    0 <= rect.top && rect.bottom <= _size.y);
+  }
+  
+  // isInsidePlate(rect):
+  public function isInsidePlate(rect:Rectangle):Boolean
+  {
     return (Entity.unit <= rect.left && 
-	    rect.right <= _scenesize.x-Entity.unit &&
+	    rect.right <= _size.x-Entity.unit &&
 	    Entity.unit <= rect.top && 
-	    rect.bottom <= _scenesize.y-Entity.unit);
+	    rect.bottom <= _size.y-Entity.unit);
+  }
+
+  // setLevelState(player)
+  public function setLevelState(player:Entity):void
+  {
+    if (_construction) {
+      // construction.
+      if (_start.hasContact(player)) {
+	setMode(false);
+      }
+    } else {
+      // platform.
+      if (_goal.hasContact(player)) {
+	// finish the level.
+	setMode(true);
+      }
+    }
   }
 
   // toggleMode()
@@ -251,11 +272,13 @@ public class Scene extends Sprite
     for each (var actor:Actor in actors) {
       actor.update();
     }
+    for each (material in materials) {
+      material.update();
+    }
     if (_construction) {
       // move/update materials.
       var pushed:Boolean = false;
       for each (material in materials) {
-	  material.update();
 	  if (material.vx != 0 || material.vy != 0) {
 	    pushed = true;
 	  }
@@ -306,6 +329,38 @@ public class Scene extends Sprite
     for each (var material:Material in materials) {
       material.repaint();
     }
+    // update the platform.
+    _start.repaint();
+    _goal.repaint();
+  }
+
+  // setPlatform:
+  private var _start:Platform;
+  private var _goal:Platform;
+  private function setPlatform(x0:int, y0:int, x1:int, y1:int):void
+  {
+    if (_start != null) {
+      removeChild(_start);
+    }
+    _start = new Platform(this, x0, y0);
+    addChild(_start);
+    if (_goal != null) {
+      removeChild(_goal);
+    }
+    _goal = new Platform(this, x1, y1);
+    addChild(_goal);
+  }
+
+  // updateCaption(title): updates the caption.
+  private function updateCaption(title:String):void
+  {
+    if (_caption != null) {
+      removeChild(_caption);
+    }
+    _caption = Main.Font.render(title, 0xffffff, 2);
+    _caption.x = (_size.x-_caption.width)/2;
+    _caption.y = 8;
+    addChild(_caption);
   }
 
   // updateGraphics(plate): draws a plate.
@@ -336,3 +391,21 @@ public class Scene extends Sprite
 }
 
 } // package
+
+import flash.geom.Rectangle;
+import Entity;
+
+class Platform extends Entity
+{
+  public function Platform(scene:Scene, x:int, y:int)
+  {
+    super(scene, new Rectangle(Entity.unit*x, Entity.unit*y, 
+			       Entity.unit*2, Entity.unit*1));
+
+    graphics.beginFill(0x888888);
+    graphics.drawRect(0, 0, bounds.width, bounds.height);
+    graphics.endFill();
+    graphics.lineStyle(4, 0xffffff);
+    graphics.drawRect(0, 0, bounds.width, bounds.height);
+  }
+}

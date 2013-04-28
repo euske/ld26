@@ -29,7 +29,7 @@ public class Player extends Actor
   private static const movesound:Sound = new MoveSoundCls();
 
   // last updated strength.
-  public var _strength:int;
+  public var _strength:int = 1;
 
   // Player(scene)
   public function Player(scene:Scene, x:int, y:int)
@@ -42,7 +42,7 @@ public class Player extends Actor
   {
     if (_construction) {
       if (dx != 0) {
-	_dx = dx*unit;
+	_dx = dx;
 	_blink = 0;
 	movesound.play();
       }
@@ -56,7 +56,7 @@ public class Player extends Actor
   {
     if (_construction) {
       if (dy != 0) {
-	_dy = dy*unit;
+	_dy = dy;
 	_blink = 0;
 	movesound.play();
       }
@@ -122,12 +122,10 @@ public class Player extends Actor
       _blink++;
       var phase:int = (_blink % (cycle*2));
       this.alpha = ((phase < cycle)? (cycle-phase) : (phase-cycle))/(cycle-1);
-      _dx = 0;
-      _dy = 0;
     } else {
       var contacts:Array = scene.getOverlappingMaterials(getOffsetRect(0, +1));
       if (contacts.length != 0) {
-	_strength = 0;
+	_strength = 1;
       }
       for each (var material:Material in contacts) {
 	_strength = Math.max(_strength, material.strength);

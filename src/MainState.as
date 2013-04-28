@@ -29,7 +29,7 @@ public class MainState extends GameState
     scene = new Scene(width, height);
 
     scene.clearLevel();
-    player = scene.setLevel(1);
+    player = scene.setLevel(0);
   }
 
   // open()
@@ -47,6 +47,7 @@ public class MainState extends GameState
   // update()
   public override function update():void
   {
+    scene.setLevelState(player);
     scene.update();
     scene.repaint();
   }

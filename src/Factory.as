@@ -17,9 +17,9 @@ public class Factory extends Sprite
   public function Factory(bounds:Rectangle, color:uint, name:String)
   {
     var text:Bitmap = Main.Font.render(name, 0x000000, 2);
-    addChild(text);
     text.x = (bounds.width-text.width)/2;
     text.y = (bounds.height-text.height)/2;
+    addChild(text);
     graphics.beginFill(0xffffff);
     graphics.drawRect(0, 0, bounds.width, bounds.height);
     graphics.endFill();

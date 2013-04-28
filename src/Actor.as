@@ -25,7 +25,7 @@ public class Actor extends Entity
   {
     var r:Rectangle = getOffsetRect(dx, dy);
     var contacts:Array = scene.getOverlappingMaterials(r);
-    return (contacts.length != 0);
+    return (contacts.length != 0) || scene.hasOverlappingPlatforms(r);
   }
 
   // setMode(construction)
@@ -47,10 +47,12 @@ public class Actor extends Entity
   {
     if (_construction) {
       // construction mode.
-      var material:Material;
-      var allowed:Boolean = true;
+      _dx *= unit;
+      _dy *= unit;
       var r:Rectangle = getOffsetRect(_dx, _dy);
+      var allowed:Boolean = scene.isInsideScreen(r);
       var contacts:Array = scene.getOverlappingMaterials(r);
+      var material:Material;
       for each (material in contacts) {
 	  if (!material.applyForce(_dx, _dy)) {
 	    allowed = false;
@@ -67,6 +69,8 @@ public class Actor extends Entity
 	  material.clearForce();
 	}
       }
+      _dx = 0;
+      _dy = 0;
     } else {
       // platformer mode.
       vy += 2;
