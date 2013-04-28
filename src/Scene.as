@@ -24,9 +24,11 @@ public class Scene extends Sprite
   private var _materials:Array = null;
   // a list of factories.
   private var _factories:Array = null;
-
+  
   // view
   private var _window:Rectangle;
+  // platesize
+  private var _platesize:Point;
   // caption
   private var _caption:Bitmap;
   // construction mode
@@ -35,6 +37,10 @@ public class Scene extends Sprite
   private var _plate:int = 0;
   private static const maxplate:int = 10;
 
+  // Start sound.
+  [Embed(source="../assets/start.mp3")]
+  private static const StartSoundCls:Class;
+  private static const startsound:Sound = new StartSoundCls();
   // Switch sound.
   [Embed(source="../assets/switch.mp3")]
   private static const SwitchSoundCls:Class;
@@ -49,8 +55,6 @@ public class Scene extends Sprite
   {
     this.size = new Point(width, height);
     _window = new Rectangle(0, 0, width, height);
-
-    updateGraphics(maxplate);
   }
   
   // setCenter(p)
@@ -98,30 +102,45 @@ public class Scene extends Sprite
 
     switch (level) {
     case 0:
-      // tomato
-      addMaterial(new Material(this, 4, 7, 2, 2, 2, 0xff0000, 0xff8800));
+      _platesize = new Point(300, 300);
+      updateCaption("PUSH MATERIALS WITH CURSOR AND\nHOP ONTO THE LEFT PLATFORM.");
+      // carrot
+      addMaterial(new Material(this, 7, 11, 3, 1, 0, 0xff8800, 0));
       // cucumber
-      addMaterial(new Material(this, 8, 6, 1, 3, 1, 0x116600, 0x88ff88));
-      // beef
-      addMaterial(new Material(this, 6, 8, 3, 2, 0, 0xcc1144, 0x884444));
+      addMaterial(new Material(this, 11, 8, 1, 3, 1, 0x116600, 0));
       // platform
-      setPlatform(0, 7, 18, 7);
-      updateCaption("MOVE MATERIALS AND\nHOP ONTO THE LEFT PLATFORM.");
+      setPlatform(4, 10, 13, 10);
       player = new Player(this, 7, 3);
       break;
 
     case 1:
-      // factories
-      addFactory(new RoastingFactory(new Rectangle(20, size.y-20-80, 160, 80),
-				     0xff0000, "ROAST"));
-      addFactory(new SeasoningFactory(new Rectangle(size.x-20-160, size.y-20-80, 160, 80),
-				      0x008844, "SEASON"));
+      _platesize = new Point(400, 400);
+      updateCaption("STICK MATERIALS TOGETHER AND\nJUMP HIGHER.");
       // tomato
-      addMaterial(new Material(this, 4, 7, 2, 2, 2, 0xff0000, 0xff8800));
+      addMaterial(new Material(this, 7, 8, 2, 2, 2, 0xff0000, 0));
       // cucumber
-      addMaterial(new Material(this, 8, 6, 1, 3, 1, 0x116600, 0x88ff88));
+      addMaterial(new Material(this, 11, 7, 1, 3, 1, 0x116600, 0));
+      // platform
+      setPlatform(3, 9, 15, 7);
+      player = new Player(this, 7, 3);
+      break;
+
+    case 2:
+      _platesize = new Point(500, 400);
+      updateCaption("ROASTING MAKES FOOD SHRINK BUT HARDER.");
+      // factories
+      addFactory(new RoastingFactory(new Rectangle(10, size.y-10-80, 120, 80),
+				     0xff0000, "ROAST"));
+      // tomato
+      addMaterial(new Material(this, 7, 6, 2, 2, 2, 0xff0000, 0xff4400));
+      // cucumber
+      addMaterial(new Material(this, 13, 7, 1, 3, 1, 0x116600, 0x337700));
+      // pork
+      addMaterial(new Material(this, 5, 10, 3, 2, 0, 0xffaacc, 0xffccee));
+      //addFactory(new SeasoningFactory(new Rectangle(size.x-20-160, size.y-20-80, 160, 80),
+      //0x008844, "SEASON"));
       // beef
-      addMaterial(new Material(this, 5, 10, 3, 3, 0, 0xcc88cc, 0x884444));
+      //addMaterial(new Material(this, 5, 10, 3, 3, 0, 0xcc88cc, 0x884444));
       // pork
       //addMaterial(new Material(this, 4, 4, 7, 3, 0, 0xffcccc, 0xcc8888));
       // lettuce
@@ -130,10 +149,9 @@ public class Scene extends Sprite
       //addMaterial(new Material(this, 6, 6, 5, 5, 0, 0xcccccc, 0xffffcc));
       // carrot
       //addMaterial(new Material(this, 7, 7, 3, 5, 0, 0xcccc88, 0xcccc88));
-      addActor(new Enemy(this, 5, 5));
+      //addActor(new Enemy(this, 5, 5));
       // 
       setPlatform(0, 10, 18, 10);
-      updateCaption("COMBINE MATERIALS AND JUMP HIGHER.");
       player = new Player(this, 7, 3);
       break;
 
@@ -228,25 +246,20 @@ public class Scene extends Sprite
       if (_start.hasContactY(player) < 0) {
 	// start the platformer.
 	setMode(false);
+	startsound.play();
       }
     } else {
       // platform.
       if (_goal.hasContactY(player) < 0) {
 	// finish the level.
 	return true;
-      } else if (size.y <= player.bounds.top) {
+      } else if (size.y <= player.bounds.bottom) {
 	// dead.
 	player.die();
+	setMode(true);
       }
     }
     return false;
-  }
-
-  // toggleMode()
-  public function toggleMode():void
-  {
-    setMode(!_construction);
-    switchsound.play()
   }
 
   // setMode(construction)
@@ -384,10 +397,10 @@ public class Scene extends Sprite
     }
     graphics.clear();
 
-    // draw plate.
-    var h:int = (_window.height-Entity.unit*2)*_plate/maxplate;
-    var r:Rectangle = new Rectangle(Entity.unit, _window.height-h, 
-				    _window.width-Entity.unit*2, h);
+    // draw the plate.
+    var h:int = _platesize.y*_plate/maxplate;
+    var r:Rectangle = new Rectangle((size.x-_platesize.x)/2, size.y-h, 
+				    _platesize.x, h);
     graphics.beginFill(0xffffff);
     graphics.drawEllipse(r.x, r.y, r.width, r.height);
     graphics.endFill();

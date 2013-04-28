@@ -25,11 +25,6 @@ public class Main extends Sprite
 
   public static var Font:AtariFont = new AtariFont();
 
-  // Start sound.
-  [Embed(source="../assets/start.mp3")]
-  private static const StartSoundCls:Class;
-  private static const startsound:Sound = new StartSoundCls();
-
   // Main()
   public function Main()
   {
@@ -47,7 +42,7 @@ public class Main extends Sprite
     _logger.height = 100;
     _logger.background = true;
     _logger.type = TextFieldType.DYNAMIC;
-    //addChild(_logger);
+    addChild(_logger);
 
     init();
   }
@@ -90,7 +85,6 @@ public class Main extends Sprite
   private function onStateChanged(e:Event):void
   {
     if (e.currentTarget is TitleState) {
-      startsound.play();
       setGameState(new MainState(stage.stageWidth, stage.stageHeight));
     } else if (e.currentTarget is MainState) {
       setGameState(new FinishState(stage.stageWidth, stage.stageHeight));
@@ -125,10 +119,6 @@ public class Main extends Sprite
   protected function OnKeyDown(e:KeyboardEvent):void 
   {
     switch (e.keyCode) {
-    case 80:			// P
-      setPauseState(!_paused);
-      break;
-
     case Keyboard.ESCAPE:	// Esc
     case 81:			// Q
       init();

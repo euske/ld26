@@ -33,7 +33,7 @@ public class MainState extends GameState
   {
     scene = new Scene(width, height);
 
-    player = scene.setLevel(0);
+    player = scene.setLevel(1);
   }
 
   // open()
@@ -100,7 +100,6 @@ public class MainState extends GameState
       break;
 
     case Keyboard.ENTER:
-      scene.toggleMode();
       break;
 
     }

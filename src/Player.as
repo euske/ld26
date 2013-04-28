@@ -96,16 +96,14 @@ public class Player extends Actor
       jump1sound.play();
       break;
     }
-    setVelocity(-_strength*10);
+    setVelocity(-_strength*12);
   }
 
   // die()
   public function die():void
   {
     deadsound.play();
-    bounds.x = _startpos.x;
-    bounds.y = _startpos.y-unit;
-    _strength = 1;
+    setPosition(_startpos.x, _startpos.y-unit);
   }
 
   // setMode
@@ -113,10 +111,7 @@ public class Player extends Actor
   {
     super.setMode(construction);
     
-    if (construction) {
-      bounds.x = Math.floor(bounds.x/unit)*unit;
-      bounds.y = Math.floor(bounds.y/unit)*unit;
-    } else {
+    if (!construction) {
       _startpos = new Point(bounds.x, bounds.y);
       _strength = 1;
     }    

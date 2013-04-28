@@ -20,18 +20,18 @@ public class Actor extends Entity
     super(scene, new Rectangle(x*unit, y*unit, unit, unit));
   }
 
-  // isBlocked(dx, dy): returns true if movement (dx,dy) is blocked.
-  private function isBlocked(dx:int, dy:int):Boolean
-  {
-    var r:Rectangle = getOffsetRect(dx, dy);
-    var contacts:Array = scene.getOverlappingMaterials(r);
-    return (contacts.length != 0) || scene.hasOverlappingPlatforms(r);
-  }
-
   // setMode(construction)
   public virtual function setMode(construction:Boolean):void
   {
     _construction = construction;
+    if (construction) {
+      setPosition(Math.floor(bounds.x/unit)*unit,
+		  Math.floor(bounds.y/unit)*unit);
+    }
+    vx = 0;
+    vy = 0;
+    _dx = 0;
+    _dy = 0;
   }
 
   // setVelocity()
@@ -83,6 +83,17 @@ public class Actor extends Entity
     }
     super.update();
   }
+
+  // isBlocked(dx, dy): returns true if movement (dx,dy) is blocked.
+  private function isBlocked(dx:int, dy:int):Boolean
+  {
+    var r:Rectangle = getOffsetRect(dx, dy);
+    if (!scene.isInsideScreen(r) ||
+	scene.hasOverlappingPlatforms(r)) return true;
+    var contacts:Array = scene.getOverlappingMaterials(r);
+    return (contacts.length != 0);
+  }
+
 }
 
 } // package

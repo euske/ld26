@@ -35,6 +35,7 @@ public class Entity extends Sprite
     return (hasContactX(entity) != 0 || 
 	    hasContactY(entity) != 0);
   }
+  // hasContactX(entity): returns -1, 0, +1
   public function hasContactX(entity:Entity):int
   {
     if (entity.bounds.bottom <= bounds.top ||
@@ -48,6 +49,7 @@ public class Entity extends Sprite
       return 0;
     }
   }
+  // hasContactY(entity): returns -1, 0, +1
   public function hasContactY(entity:Entity):int
   {
     if (entity.bounds.right <= bounds.left ||
@@ -60,6 +62,15 @@ public class Entity extends Sprite
     } else {
       return 0;
     }
+  }
+
+  // setPosition():
+  public virtual function setPosition(x:int, y:int):void
+  {
+    bounds.x = x;
+    bounds.y = y;
+    vx = 0;
+    vy = 0;
   }
 
   // update(): update the position.

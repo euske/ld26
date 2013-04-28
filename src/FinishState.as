@@ -13,7 +13,7 @@ public class FinishState extends GameState
 
   public function FinishState(width:int, height:int)
   {
-    text = Main.Font.render("CONGRATS!\nYER SO MLG!!", 0xffff00, 3);
+    text = Main.Font.render("CONGRATULATIONS!\nYER SO MLG!!", 0xffff00, 3);
     text.x = (width-text.width)/2;
     text.y = (height-text.height)/2;
   }
