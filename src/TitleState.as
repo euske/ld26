@@ -13,7 +13,9 @@ public class TitleState extends GameState
 
   public function TitleState(width:int, height:int)
   {
-    text = Main.Font.render("\"CONTROLLED DIET\"\n\nPRESS ENTER TO START", 0xff0000, 3);
+    text = Main.Font.render("\"CONTROLLED DIET\"\n"+
+			    "LD26 ENTRY BY EUSKE\n\n"+
+			    "PRESS ENTER TO START", 0xff0000, 3);
     text.x = (width-text.width)/2;
     text.y = (height-text.height)/2;
   }

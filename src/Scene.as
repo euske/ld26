@@ -49,6 +49,14 @@ public class Scene extends Sprite
   [Embed(source="../assets/push.mp3")]
   private static const PushSoundCls:Class;
   private static const pushsound:Sound = new PushSoundCls();
+  // Dead sound.
+  [Embed(source="../assets/dead.mp3")]
+  private static const DeadSoundCls:Class;
+  private static const deadsound:Sound = new DeadSoundCls();
+  // Next level sound.
+  [Embed(source="../assets/nextlevel.mp3")]
+  private static const NextlevelSoundCls:Class;
+  private static const nextlevelsound:Sound = new NextlevelSoundCls();
 
   // Scene(width, height)
   public function Scene(width:int, height:int)
@@ -99,6 +107,7 @@ public class Scene extends Sprite
       clearLevel();
     }
     this.level = level;
+    nextlevelsound.play();
 
     switch (level) {
     case 0:
@@ -129,14 +138,13 @@ public class Scene extends Sprite
       _platesize = new Point(500, 400);
       updateCaption("ROASTING MAKES FOOD SHRINK BUT HARDER.");
       // factories
-      addFactory(new RoastingFactory(new Rectangle(10, size.y-10-80, 120, 80),
-				     0xff0000, "ROAST"));
+      addFactory(new RoastingFactory(new Rectangle(10, size.y-10-80, 120, 80)));
       // tomato
       addMaterial(new Material(this, 7, 6, 2, 2, 2, 0xff0000, 0xff4400));
       // cucumber
       addMaterial(new Material(this, 13, 7, 1, 3, 1, 0x116600, 0x337700));
       // pork
-      addMaterial(new Material(this, 5, 10, 3, 2, 0, 0xffaacc, 0xffccee));
+      addMaterial(new Material(this, 6, 10, 3, 2, 0, 0xffaacc, 0xffccee));
       //addFactory(new SeasoningFactory(new Rectangle(size.x-20-160, size.y-20-80, 160, 80),
       //0x008844, "SEASON"));
       // beef
@@ -256,6 +264,7 @@ public class Scene extends Sprite
       } else if (size.y <= player.bounds.bottom) {
 	// dead.
 	player.die();
+	deadsound.play();
 	setMode(true);
       }
     }

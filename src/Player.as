@@ -27,10 +27,6 @@ public class Player extends Actor
   [Embed(source="../assets/move.mp3")]
   private static const MoveSoundCls:Class;
   private static const movesound:Sound = new MoveSoundCls();
-  // Dead sound.
-  [Embed(source="../assets/dead.mp3")]
-  private static const DeadSoundCls:Class;
-  private static const deadsound:Sound = new DeadSoundCls();
 
   // last updated strength.
   private var _strength:int;
@@ -102,7 +98,6 @@ public class Player extends Actor
   // die()
   public function die():void
   {
-    deadsound.play();
     setPosition(_startpos.x, _startpos.y-unit);
   }
 

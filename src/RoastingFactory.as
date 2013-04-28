@@ -13,9 +13,9 @@ public class RoastingFactory extends Factory
   private static const RoastSoundCls:Class;
   private static const roastsound:Sound = new RoastSoundCls();
 
-  public function RoastingFactory(bounds:Rectangle, color:uint, name:String)
+  public function RoastingFactory(bounds:Rectangle)
   {
-    super(bounds, color, name);
+    super(bounds, 0x884444, "ROAST");
   }
     
   // putMaterial(material): makes the material roasted.
