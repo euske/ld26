@@ -9,11 +9,20 @@ import flash.geom.Point;
 //
 public class Player extends Actor
 {
-  // Jump sound.
-  [Embed(source="../assets/jump.mp3")]
-  private static const JumpSoundCls:Class;
-  private static const jumpsound:Sound = new JumpSoundCls();
-
+  // Jump/attack sound.
+  [Embed(source="../assets/jump1.mp3")]
+  private static const Jump1SoundCls:Class;
+  private static const jump1sound:Sound = new Jump1SoundCls();
+  [Embed(source="../assets/jump2.mp3")]
+  private static const Jump2SoundCls:Class;
+  private static const jump2sound:Sound = new Jump2SoundCls();
+  [Embed(source="../assets/jump3.mp3")]
+  private static const Jump3SoundCls:Class;
+  private static const jump3sound:Sound = new Jump3SoundCls();
+  [Embed(source="../assets/attack.mp3")]
+  private static const AttackSoundCls:Class;
+  private static const attacksound:Sound = new AttackSoundCls();
+  
   // Move sound.
   [Embed(source="../assets/move.mp3")]
   private static const MoveSoundCls:Class;
@@ -61,16 +70,30 @@ public class Player extends Actor
   private var _jumpkey:Boolean;
   public function jump():void
   {
+    if (_construction) return;
     if (_jumpkey) return;
     _jumpkey = true;
-    jumpsound.play();
+
     var strength:int = 0;
     var contacts:Array = scene.getOverlappingMaterials(getOffsetRect(0, +1));
     for each (var material:Material in contacts) {
       strength = Math.max(strength, material.strength);
     }
+    switch (strength) {
+    case 2:
+      jump2sound.play();
+      break;
+    case 3:
+      jump3sound.play();
+      break;
+    case 4:
+      attacksound.play();
+      break;
+    default:
+      jump1sound.play();
+      break;
+    }
     setVelocity(-strength*10);
-    Main.log("strength="+strength);
   }
 
   // setMode

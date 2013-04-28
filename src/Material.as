@@ -1,6 +1,7 @@
 package {
 
 import flash.display.Sprite;
+import flash.media.Sound;
 import flash.geom.Rectangle;
 import flash.geom.Point;
 
@@ -22,6 +23,11 @@ public class Material extends Entity
   // true if seasoned.
   private var _seasoned:Boolean;
 
+  // Connected sound.
+  [Embed(source="../assets/connected.mp3")]
+  private static const ConnectedSoundCls:Class;
+  private static const connectedsound:Sound = new ConnectedSoundCls();
+
   // Material(scene, pt)
   public function Material(scene:Scene, 
 			   x:int, y:int, width:int, height:int, 
@@ -33,7 +39,7 @@ public class Material extends Entity
     this.roastedcolor = roastedcolor;
     updateGraphics();
   }
-  
+
   // clearForce(): clear forces.
   public function clearForce():void
   {
@@ -97,6 +103,10 @@ public class Material extends Entity
   public function fixateConnection():void
   {
     var strength:int = (this.group == null)? 1 : this.group.length;
+    if (_strength < strength && 
+	this.group != null && this.group[0] == this) {
+      connectedsound.play();
+    }
     if (_strength != strength) {
       _strength = strength;
       Main.log("strength:"+strength);

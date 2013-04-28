@@ -32,6 +32,10 @@ public class Scene extends Sprite
   [Embed(source="../assets/switch.mp3")]
   private static const SwitchSoundCls:Class;
   private static const switchsound:Sound = new SwitchSoundCls();
+  // Push sound.
+  [Embed(source="../assets/push.mp3")]
+  private static const PushSoundCls:Class;
+  private static const pushsound:Sound = new PushSoundCls();
 
   // Scene(width, height)
   public function Scene(width:int, height:int)
@@ -247,14 +251,21 @@ public class Scene extends Sprite
     }
     if (_construction) {
       // move/update materials.
+      var pushed:Boolean = false;
       for each (material in materials) {
 	  material.update();
+	  if (material.vx != 0 || material.vy != 0) {
+	    pushed = true;
+	  }
 	  for each (var factory:Factory in factories) {
 	      if (factory.canAcceptMaterial(material)) {
 		factory.putMaterial(material);
 	      }
 	    }
 	}
+      if (pushed) {
+	pushsound.play();
+      }
       // detect grouped materials.
       for each (material in materials) {
 	  material.clearConnection();
