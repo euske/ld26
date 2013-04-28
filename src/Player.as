@@ -28,6 +28,9 @@ public class Player extends Actor
   private static const MoveSoundCls:Class;
   private static const movesound:Sound = new MoveSoundCls();
 
+  // last updated strength.
+  public var _strength:int;
+
   // Player(scene)
   public function Player(scene:Scene, x:int, y:int)
   {
@@ -44,7 +47,7 @@ public class Player extends Actor
 	movesound.play();
       }
     } else {
-      _dx = dx*4;
+      _dx = dx*4*_strength;
     }
   }
 
@@ -74,12 +77,7 @@ public class Player extends Actor
     if (_jumpkey) return;
     _jumpkey = true;
 
-    var strength:int = 0;
-    var contacts:Array = scene.getOverlappingMaterials(getOffsetRect(0, +1));
-    for each (var material:Material in contacts) {
-      strength = Math.max(strength, material.strength);
-    }
-    switch (strength) {
+    switch (_strength) {
     case 2:
       jump2sound.play();
       break;
@@ -93,7 +91,7 @@ public class Player extends Actor
       jump1sound.play();
       break;
     }
-    setVelocity(-strength*10);
+    setVelocity(-_strength*10);
   }
 
   // setMode
@@ -126,6 +124,14 @@ public class Player extends Actor
       this.alpha = ((phase < cycle)? (cycle-phase) : (phase-cycle))/(cycle-1);
       _dx = 0;
       _dy = 0;
+    } else {
+      var contacts:Array = scene.getOverlappingMaterials(getOffsetRect(0, +1));
+      if (contacts.length != 0) {
+	_strength = 0;
+      }
+      for each (var material:Material in contacts) {
+	_strength = Math.max(_strength, material.strength);
+      }
     }
   }
 }

@@ -27,6 +27,7 @@ public class Scene extends Sprite
   private var _construction:Boolean = true;
   // plate status (10: full, 0: none)
   private var _plate:int = 0;
+  private static const maxplate:int = 10;
 
   // Switch sound.
   [Embed(source="../assets/switch.mp3")]
@@ -43,7 +44,7 @@ public class Scene extends Sprite
     _scenesize = new Point(width, height);
     _window = new Rectangle(0, 0, width, height);
 
-    updatePlate(10);
+    updateGraphics(maxplate);
   }
 
   // size
@@ -290,9 +291,9 @@ public class Scene extends Sprite
     }
     // update the plate.
     if (_construction) {
-      updatePlate(10);
+      updateGraphics(maxplate);
     } else {
-      updatePlate(0);
+      updateGraphics(0);
     }
   }
 
@@ -307,8 +308,8 @@ public class Scene extends Sprite
     }
   }
 
-  // updatePlate(plate): draws a plate.
-  private function updatePlate(plate:int):void
+  // updateGraphics(plate): draws a plate.
+  private function updateGraphics(plate:int):void
   {
     if (_plate == plate) return;
     if (_plate < plate) {
@@ -318,10 +319,12 @@ public class Scene extends Sprite
       // fold down.
       _plate--;
     }
-    var h:int = (_window.height-Entity.unit*2)*_plate/10;
+    graphics.clear();
+
+    // draw plate.
+    var h:int = (_window.height-Entity.unit*2)*_plate/maxplate;
     var r:Rectangle = new Rectangle(Entity.unit, _window.height-h, 
 				    _window.width-Entity.unit*2, h);
-    graphics.clear()
     graphics.beginFill(0xffffff);
     graphics.drawEllipse(r.x, r.y, r.width, r.height);
     graphics.endFill();
