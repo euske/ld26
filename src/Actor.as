@@ -34,13 +34,11 @@ public class Actor extends Entity
     _construction = construction;
   }
 
-  public static const jumpvelocity:int = -10;
-
-  // jump()
-  public virtual function jump():void
+  // setVelocity()
+  public virtual function setVelocity(velocity:int):void
   {
     if (vy == 0 && isBlocked(0, +1)) {
-      vy = jumpvelocity;
+      vy = velocity;
     }
   }
   

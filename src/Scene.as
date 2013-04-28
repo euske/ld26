@@ -238,30 +238,14 @@ public class Scene extends Sprite
   public function update():void
   {
     var material:Material;
-    // initialize.
+    // move actors.
     for each (material in materials) {
       material.clearForce();
-      material.clearConnection();
     }
-    // move actors.
     for each (var actor:Actor in actors) {
       actor.update();
     }
     if (_construction) {
-      // detect grouped materials.
-      var groups:Array = new Array();
-      for each (material in materials) {
-	  if (material.group != null && groups.indexOf(material.group) == -1) {
-	    groups.push(material.group);
-	  }
-	}
-      for each (material in materials) {
-	  for each (var m:Material in materials) {
-	      if (material.hasContact(m)) {
-		material.connectTo(m);
-	      }
-	    }
-	}
       // move/update materials.
       for each (material in materials) {
 	  material.update();
@@ -270,6 +254,26 @@ public class Scene extends Sprite
 		factory.putMaterial(material);
 	      }
 	    }
+	}
+      // detect grouped materials.
+      for each (material in materials) {
+	  material.clearConnection();
+	}
+      for each (material in materials) {
+	  for each (var m:Material in materials) {
+	      if (material.hasContact(m)) {
+		material.makeConnection(m);
+	      }
+	    }
+	}
+      for each (material in materials) {
+	  material.fixateConnection();
+	}
+      var groups:Array = new Array();
+      for each (material in materials) {
+	  if (material.group != null && groups.indexOf(material.group) == -1) {
+	    groups.push(material.group);
+	  }
 	}
     }
     // update the plate.

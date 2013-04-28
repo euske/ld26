@@ -70,6 +70,9 @@ public class MainState extends GameState
     case Keyboard.UP:
     case 87:			// W
     case 75:			// K
+    case Keyboard.SPACE:
+    case 88:			// X
+    case 90:			// Z
       player.setDirectionY(-1);
       break;
 
@@ -77,12 +80,6 @@ public class MainState extends GameState
     case 83:			// S
     case 74:			// J
       player.setDirectionY(+1);
-      break;
-
-    case Keyboard.SPACE:
-    case 88:			// X
-    case 90:			// Z
-      player.jump();
       break;
 
     case Keyboard.ENTER:
@@ -104,6 +101,19 @@ public class MainState extends GameState
     case 76:			// L
       player.setDirectionX(0);
       break;
+
+    case Keyboard.UP:
+    case Keyboard.DOWN:
+    case 87:			// W
+    case 75:			// K
+    case 83:			// S
+    case 74:			// J
+    case Keyboard.SPACE:
+    case 88:			// X
+    case 90:			// Z
+      player.setDirectionY(0);
+      break;
+
     }
   }
 }

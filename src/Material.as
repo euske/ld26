@@ -21,8 +21,6 @@ public class Material extends Entity
   private var _roasted:Boolean;
   // true if seasoned.
   private var _seasoned:Boolean;
-  // number of connected components.
-  private var _connected:int;
 
   // Material(scene, pt)
   public function Material(scene:Scene, 
@@ -65,8 +63,8 @@ public class Material extends Entity
     this.group = null;
   }
 
-  // connectTo(material): connect two materials.
-  public function connectTo(material:Material):void
+  // makeConnection(material): connect two materials.
+  public function makeConnection(material:Material):void
   {
     if (this.group == null) {
       if (material.group != null) {
@@ -94,6 +92,24 @@ public class Material extends Entity
     }
   }
 
+  // fixateConnection():
+  private var _strength:int;
+  public function fixateConnection():void
+  {
+    var strength:int = (this.group == null)? 1 : this.group.length;
+    if (_strength != strength) {
+      _strength = strength;
+      Main.log("strength:"+strength);
+      updateGraphics();
+    }
+  }
+
+  // strength
+  public function get strength():int
+  {
+    return _strength;
+  }
+
   // roast()
   public function roast():void
   {
@@ -106,18 +122,6 @@ public class Material extends Entity
   {
     _seasoned = true;
     updateGraphics();
-  }
-
-  // update()
-  public override function update():void
-  {
-    super.update();
-    var connected:int = (this.group == null)? 0 : this.group.length;
-    if (_connected != connected) {
-      _connected = connected;
-      //Main.log("connected:"+connected);
-      updateGraphics();
-    }
   }
 
   // updateGraphics()
@@ -149,7 +153,7 @@ public class Material extends Entity
 	graphics.endFill();
       }
     }
-    switch (_connected) {
+    switch (strength) {
     case 0:
     case 1:
       break;

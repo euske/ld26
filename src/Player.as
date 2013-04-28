@@ -49,16 +49,28 @@ public class Player extends Actor
 	movesound.play();
       }
     } else {
-      jump();
+      if (dy != 0) {
+	jump();
+      } else {
+	_jumpkey = false;
+      }
     }
   }
 
   // jump()
-  public override function jump():void
+  private var _jumpkey:Boolean;
+  public function jump():void
   {
-    Main.log("jump!");
-    super.jump();
+    if (_jumpkey) return;
+    _jumpkey = true;
     jumpsound.play();
+    var strength:int = 0;
+    var contacts:Array = scene.getOverlappingMaterials(getOffsetRect(0, +1));
+    for each (var material:Material in contacts) {
+      strength = Math.max(strength, material.strength);
+    }
+    setVelocity(-strength*10);
+    Main.log("strength="+strength);
   }
 
   // setMode

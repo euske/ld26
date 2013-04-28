@@ -21,7 +21,6 @@ public class Main extends Sprite
 
   private var _state:GameState;
   private var _paused:Boolean;
-  private var _keydown:Boolean;
 
   public static var Font:AtariFont = new AtariFont();
 
@@ -116,8 +115,6 @@ public class Main extends Sprite
   // OnKeyDown(e)
   protected function OnKeyDown(e:KeyboardEvent):void 
   {
-    if (_keydown) return;
-    _keydown = true;
     switch (e.keyCode) {
     case 80:			// P
       setPauseState(!_paused);
@@ -138,7 +135,6 @@ public class Main extends Sprite
   // OnKeyUp(e)
   protected function OnKeyUp(e:KeyboardEvent):void 
   {
-    _keydown = false;
     if (_state != null) {
       _state.keyup(e.keyCode);
     }
