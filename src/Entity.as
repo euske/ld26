@@ -12,13 +12,23 @@ public class Entity extends Sprite
   public static const unit:int = 32;
   
   public var scene:Scene;
-  public var bounds:Rectangle;
   public var vx:int, vy:int;
 
   public function Entity(scene:Scene, bounds:Rectangle)
   {
     this.scene = scene;
     this.bounds = bounds;
+  }
+
+  // bounds:
+  private var _bounds:Rectangle;
+  public virtual function get bounds():Rectangle
+  {
+    return _bounds;
+  }
+  public virtual function set bounds(rect:Rectangle):void
+  {
+    _bounds = rect;
   }
 
   // getOffsetRect(vx, vy): returns an offset rectangle.

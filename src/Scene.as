@@ -356,14 +356,15 @@ public class Scene extends Sprite
       if (pushed) {
 	pushsound.play();
       }
-      // detect grouped materials.
-      for each (entity in _entities) {
+    }
+    // detect grouped materials.
+    for each (entity in _entities) {
 	if (entity is Material) {
 	  material = Material(entity);
 	  material.clearConnection();
 	}
-      }
-      for each (entity in _entities) {
+    }
+    for each (entity in _entities) {
 	if (entity is Material) {
 	  material = Material(entity);
 	  if (!material.stickable) continue;
@@ -377,15 +378,15 @@ public class Scene extends Sprite
 	    }
 	  }
 	}
-      }
-      for each (entity in _entities) {
+    }
+    for each (entity in _entities) {
 	if (entity is Material) {
 	  material = Material(entity);
 	  material.fixateConnection();
 	}
-      }
-      var groups:Array = new Array();
-      for each (entity in _entities) {
+    }
+    var groups:Array = new Array();
+    for each (entity in _entities) {
 	if (entity is Material) {
 	  material = Material(entity);
 	  if (material.group != null && 
@@ -393,7 +394,6 @@ public class Scene extends Sprite
 	    groups.push(material.group);
 	  }
 	}
-      }
     }
     // update the plate.
     if (_construction) {

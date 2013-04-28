@@ -40,7 +40,7 @@ public class Actor extends Entity
   // setVelocity()
   public virtual function setVelocity(velocity:int):void
   {
-    if (vy == 0 && isBlocked(0, -velocity)) {
+    if (isBlocked(0, -velocity)) {
       vy = velocity;
     }
   }

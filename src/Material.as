@@ -157,11 +157,24 @@ public class Material extends Entity
     }
   }
 
+  // bounds:
+  private var _rot:int;
+  public override function get bounds():Rectangle
+  {
+    if (_construction) {
+      return super.bounds;
+    } else {
+      return new Rectangle(super.bounds.x, super.bounds.y+_rot, 
+			   super.bounds.width, super.bounds.height);
+    }
+  }
+
   // setMode(construction)
   private var _construction:Boolean;
   public override function setMode(construction:Boolean):void
   {
     _construction = construction;
+    _rot = 0;
   }
 
   // blinking status.
@@ -170,6 +183,9 @@ public class Material extends Entity
 
   public override function update():void
   {
+    if (!_construction && perishable && !_seasoned) {
+      _rot++;
+    }
     super.update();
     _blink++;
     var phase:int = (_blink % (cycle*2));
