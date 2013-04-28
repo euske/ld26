@@ -20,8 +20,8 @@ public class Scene extends Sprite
 
   // a list of actors.
   private var _actors:Array = null;
-  // a list of deployed materials.
-  private var _materials:Array = null;
+  // a list of entities.
+  private var _entities:Array = null;
   // a list of factories.
   private var _factories:Array = null;
   
@@ -114,11 +114,11 @@ public class Scene extends Sprite
       _platesize = new Point(300, 300);
       updateCaption("PUSH MATERIALS WITH CURSOR AND\nHOP ONTO THE LEFT PLATFORM.");
       // carrot
-      addMaterial(new Material(this, 7, 11, 3, 1, 0, 0xff8800, 0));
+      addEntity(new Material(this, 7, 11, 3, 1, 0, 0xff8800, 0));
       // cucumber
-      addMaterial(new Material(this, 11, 8, 1, 3, 1, 0x116600, 0));
+      addEntity(new Material(this, 11, 8, 1, 3, 1, 0x116600, 0));
       // platform
-      setPlatform(4, 10, 13, 10);
+      addPlatform(4, 10, 13, 10);
       player = new Player(this, 7, 3);
       break;
 
@@ -126,11 +126,11 @@ public class Scene extends Sprite
       _platesize = new Point(400, 400);
       updateCaption("STICK MATERIALS TOGETHER AND\nJUMP HIGHER.");
       // tomato
-      addMaterial(new Material(this, 7, 8, 2, 2, 2, 0xff0000, 0));
+      addEntity(new Material(this, 7, 8, 2, 2, 2, 0xff0000, 0));
       // cucumber
-      addMaterial(new Material(this, 11, 7, 1, 3, 1, 0x116600, 0));
+      addEntity(new Material(this, 11, 7, 1, 3, 1, 0x116600, 0));
       // platform
-      setPlatform(3, 9, 15, 7);
+      addPlatform(3, 9, 15, 7);
       player = new Player(this, 7, 3);
       break;
 
@@ -140,26 +140,26 @@ public class Scene extends Sprite
       // factories
       addFactory(new RoastingFactory(new Rectangle(10, size.y-10-80, 120, 80)));
       // tomato
-      addMaterial(new Material(this, 7, 6, 2, 2, 2, 0xff0000, 0xff4400));
+      addEntity(new Material(this, 7, 6, 2, 2, 2, 0xff0000, 0xff4400));
       // cucumber
-      addMaterial(new Material(this, 13, 7, 1, 3, 1, 0x116600, 0x337700));
+      addEntity(new Material(this, 13, 7, 1, 3, 1, 0x116600, 0x337700));
       // pork
-      addMaterial(new Material(this, 6, 10, 3, 2, 0, 0xffaacc, 0xffccee));
+      addEntity(new Material(this, 6, 10, 3, 2, 0, 0xffaacc, 0xffccee));
       //addFactory(new SeasoningFactory(new Rectangle(size.x-20-160, size.y-20-80, 160, 80),
       //0x008844, "SEASON"));
       // beef
-      //addMaterial(new Material(this, 5, 10, 3, 3, 0, 0xcc88cc, 0x884444));
+      //addEntity(new Material(this, 5, 10, 3, 3, 0, 0xcc88cc, 0x884444));
       // pork
-      //addMaterial(new Material(this, 4, 4, 7, 3, 0, 0xffcccc, 0xcc8888));
+      //addEntity(new Material(this, 4, 4, 7, 3, 0, 0xffcccc, 0xcc8888));
       // lettuce
-      //addMaterial(new Material(this, 5, 5, 7, 7, 0, 0x88ffcc, 0x88ff88));
+      //addEntity(new Material(this, 5, 5, 7, 7, 0, 0x88ffcc, 0x88ff88));
       // tofu
-      //addMaterial(new Material(this, 6, 6, 5, 5, 0, 0xcccccc, 0xffffcc));
+      //addEntity(new Material(this, 6, 6, 5, 5, 0, 0xcccccc, 0xffffcc));
       // carrot
-      //addMaterial(new Material(this, 7, 7, 3, 5, 0, 0xcccc88, 0xcccc88));
+      //addEntity(new Material(this, 7, 7, 3, 5, 0, 0xcccc88, 0xcccc88));
       //addActor(new Enemy(this, 5, 5));
       // 
-      setPlatform(0, 10, 18, 10);
+      addPlatform(0, 10, 18, 10);
       player = new Player(this, 7, 3);
       break;
 
@@ -180,11 +180,11 @@ public class Scene extends Sprite
       removeChild(actor);
     }
     _actors = new Array();
-    for each (var material:Material in _materials) {
-      removeChild(material);
+    for each (var entity:Entity in _entities) {
+      removeChild(entity);
     }
-    _materials = new Array();
-    for each (var factory:Factory in _materials) {
+    _entities = new Array();
+    for each (var factory:Factory in _entities) {
       removeChild(factory);
     }
     _factories = new Array();
@@ -197,11 +197,11 @@ public class Scene extends Sprite
     _actors.push(actor);
   }
 
-  // addMaterial(material)
-  public function addMaterial(material:Material):void
+  // addEntity(entity)
+  public function addEntity(entity:Entity):void
   {
-    addChild(material);
-    _materials.push(material);
+    addChild(entity);
+    _entities.push(entity);
   }
 
   // addFactory(factory)
@@ -218,16 +218,16 @@ public class Scene extends Sprite
 	    _goal.bounds.intersects(rect));
   }
 
-  // getOverlappingMaterials(rect)
-  public function getOverlappingMaterials(rect:Rectangle):Array
+  // getOverlappingEntities(rect)
+  public function getOverlappingEntities(rect:Rectangle):Array
   {
-    var contacts:Array = new Array();
-    for each (var material:Material in _materials) {
-      if (material.bounds.intersects(rect)) {
-	contacts.push(material);
+    var entities:Array = new Array();
+    for each (var entity:Entity in _entities) {
+      if (entity.bounds.intersects(rect)) {
+	entities.push(entity);
       }
     }
-    return contacts;
+    return entities;
   }
 
   // isInsideScreen(rect):
@@ -294,53 +294,73 @@ public class Scene extends Sprite
   // update()
   public function update():void
   {
-    var material:Material;
-    // move _actors.
-    for each (material in _materials) {
-      material.clearForce();
+    var entity:Entity;
+    // move actors.
+    for each (entity in _entities) {
+      entity.clearForce();
     }
     for each (var actor:Actor in _actors) {
       actor.update();
     }
-    for each (material in _materials) {
-      material.update();
+    for each (entity in _entities) {
+      entity.update();
     }
+    var material:Material;
     if (_construction) {
       // move/update materials.
       var pushed:Boolean = false;
-      for each (material in _materials) {
-	  if (material.vx != 0 || material.vy != 0) {
-	    pushed = true;
-	  }
-	  for each (var factory:Factory in _factories) {
-	      if (factory.canAcceptMaterial(material)) {
-		factory.putMaterial(material);
-	      }
-	    }
+      for each (entity in _entities) {
+	if (entity.vx != 0 || entity.vy != 0) {
+	  pushed = true;
 	}
+	if (entity is Material) {
+	  material = Material(entity);
+	  for each (var factory:Factory in _factories) {
+	    if (factory.canAcceptMaterial(material)) {
+	      factory.putMaterial(material);
+	    }
+	  }
+	}
+      }
       if (pushed) {
 	pushsound.play();
       }
       // detect grouped materials.
-      for each (material in _materials) {
+      for each (entity in _entities) {
+	if (entity is Material) {
+	  material = Material(entity);
 	  material.clearConnection();
 	}
-      for each (material in _materials) {
-	  for each (var m:Material in _materials) {
+      }
+      for each (entity in _entities) {
+	if (entity is Material) {
+	  material = Material(entity);
+	  for each (var e:Entity in _entities) {
+	    if (e is Material) {
+	      var m:Material = Material(e);
 	      if (material.hasContact(m)) {
 		material.makeConnection(m);
 	      }
 	    }
+	  }
 	}
-      for each (material in _materials) {
+      }
+      for each (entity in _entities) {
+	if (entity is Material) {
+	  material = Material(entity);
 	  material.fixateConnection();
 	}
+      }
       var groups:Array = new Array();
-      for each (material in _materials) {
-	  if (material.group != null && groups.indexOf(material.group) == -1) {
+      for each (entity in _entities) {
+	if (entity is Material) {
+	  material = Material(entity);
+	  if (material.group != null && 
+	      groups.indexOf(material.group) == -1) {
 	    groups.push(material.group);
 	  }
 	}
+      }
     }
     // update the plate.
     if (_construction) {
@@ -356,29 +376,23 @@ public class Scene extends Sprite
     for each (var actor:Actor in _actors) {
       actor.repaint();
     }
-    for each (var material:Material in _materials) {
-      material.repaint();
+    for each (var entity:Entity in _entities) {
+      entity.repaint();
     }
     // update the platform.
     _start.repaint();
     _goal.repaint();
   }
 
-  // setPlatform:
+  // addPlatform:
   private var _start:Platform;
   private var _goal:Platform;
-  private function setPlatform(x0:int, y0:int, x1:int, y1:int):void
+  private function addPlatform(x0:int, y0:int, x1:int, y1:int):void
   {
-    if (_start != null) {
-      removeChild(_start);
-    }
     _start = new Platform(this, x0, y0);
-    addChild(_start);
-    if (_goal != null) {
-      removeChild(_goal);
-    }
+    addEntity(_start);
     _goal = new Platform(this, x1, y1);
-    addChild(_goal);
+    addEntity(_goal);
   }
 
   // updateCaption(title): updates the caption.

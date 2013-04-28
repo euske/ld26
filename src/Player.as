@@ -71,6 +71,8 @@ public class Player extends Actor
   }
 
   // jump()
+  public static const jumpvelocity:int = 14;
+
   private var _jumpkey:Boolean;
   public function jump():void
   {
@@ -78,21 +80,26 @@ public class Player extends Actor
     if (_jumpkey) return;
     _jumpkey = true;
 
+    var v:int;
     switch (_strength) {
     case 2:
       jump2sound.play();
+      v = -20;
       break;
     case 3:
       jump3sound.play();
+      v = -30;
       break;
     case 4:
       attacksound.play();
+      v = -40
       break;
     default:
       jump1sound.play();
+      v = -14
       break;
     }
-    setVelocity(-_strength*12);
+    setVelocity(v);
   }
 
   // die()
@@ -130,12 +137,15 @@ public class Player extends Actor
       var phase:int = (_blink % (cycle*2));
       this.alpha = ((phase < cycle)? (cycle-phase) : (phase-cycle))/(cycle-1);
     } else {
-      var contacts:Array = scene.getOverlappingMaterials(getOffsetRect(0, +1));
-      if (contacts.length != 0) {
+      var entities:Array = scene.getOverlappingEntities(getOffsetRect(0, +1));
+      if (entities.length != 0) {
 	_strength = 1;
       }
-      for each (var material:Material in contacts) {
-	_strength = Math.max(_strength, material.strength);
+      for each (var entity:Entity in entities) {
+	if (entity is Material) {
+	  var material:Material = Material(entity);
+	  _strength = Math.max(_strength, material.strength);
+	}
       }
     }
   }

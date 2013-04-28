@@ -73,6 +73,19 @@ public class Entity extends Sprite
     vy = 0;
   }
 
+  // clearForce(): clear forces.
+  public virtual function clearForce():void
+  {
+    vx = 0;
+    vy = 0;
+  }
+
+  // applyForce(dx, dy): apply forces, returns true if it's movable.
+  public virtual function applyForce(dx:int, dy:int):Boolean
+  {
+    return false;
+  }
+
   // update(): update the position.
   public virtual function update():void
   {

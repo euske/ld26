@@ -44,22 +44,15 @@ public class Material extends Entity
     updateGraphics();
   }
 
-  // clearForce(): clear forces.
-  public function clearForce():void
-  {
-    vx = 0;
-    vy = 0;
-  }
-
   // applyForce(dx, dy): apply forces, returns true if it's movable.
-  public function applyForce(dx:int, dy:int):Boolean
+  public override function applyForce(dx:int, dy:int):Boolean
   {
     var r:Rectangle = getOffsetRect(dx, dy);
     if (vx != 0 || vy != 0) return false;
     if (!scene.isInsidePlate(r)) return false;
-    for each (var material:Material in scene.getOverlappingMaterials(r)) {
-      if (material != this) {
-	if (!material.applyForce(dx, dy)) return false;
+    for each (var entity:Entity in scene.getOverlappingEntities(r)) {
+      if (entity != this) {
+	if (!entity.applyForce(dx, dy)) return false;
       }
     }
     vx = dx;

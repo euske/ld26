@@ -13,6 +13,8 @@ public class Actor extends Entity
   protected var _construction:Boolean = true;
   // _dx, _dy: intent to move.
   protected var _dx:int, _dy:int;
+  
+  public static const gravity:int = 2;
 
   // Actor(scene, x, y)
   public function Actor(scene:Scene, x:int, y:int)
@@ -37,7 +39,7 @@ public class Actor extends Entity
   // setVelocity()
   public virtual function setVelocity(velocity:int):void
   {
-    if (vy == 0 && isBlocked(0, +1)) {
+    if (vy == 0 && isBlocked(0, -velocity)) {
       vy = velocity;
     }
   }
@@ -51,10 +53,10 @@ public class Actor extends Entity
       _dy *= unit;
       var r:Rectangle = getOffsetRect(_dx, _dy);
       var allowed:Boolean = scene.isInsideScreen(r);
-      var contacts:Array = scene.getOverlappingMaterials(r);
-      var material:Material;
-      for each (material in contacts) {
-	  if (!material.applyForce(_dx, _dy)) {
+      var entities:Array = scene.getOverlappingEntities(r);
+      var entity:Entity;
+      for each (entity in entities) {
+	  if (!entity.applyForce(_dx, _dy)) {
 	    allowed = false;
 	    break;
 	  }
@@ -65,15 +67,15 @@ public class Actor extends Entity
       } else {
 	vx = 0;
 	vy = 0;
-	for each (material in contacts) {
-	  material.clearForce();
+	for each (entity in entities) {
+	  entity.clearForce();
 	}
       }
       _dx = 0;
       _dy = 0;
     } else {
       // platformer mode.
-      vy += 2;
+      vy += gravity;
       vx = _dx;
       while (vx != 0 || vy != 0) {
 	if (!isBlocked(vx, vy)) break;
@@ -90,8 +92,8 @@ public class Actor extends Entity
     var r:Rectangle = getOffsetRect(dx, dy);
     if (!scene.isInsideScreen(r) ||
 	scene.hasOverlappingPlatforms(r)) return true;
-    var contacts:Array = scene.getOverlappingMaterials(r);
-    return (contacts.length != 0);
+    var entities:Array = scene.getOverlappingEntities(r);
+    return (entities.length != 0);
   }
 
 }
