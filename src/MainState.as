@@ -15,21 +15,28 @@ import Factory;
 //
 public class MainState extends GameState
 {
-  // Player image:
-  [Embed(source="../assets/player.png", mimeType="image/png")]
-  private static const PlayerImageCls:Class;
-  private static const playerimage:Bitmap = new PlayerImageCls();
+  // Start sound.
+  [Embed(source="../assets/start.mp3")]
+  private static const StartSoundCls:Class;
+  private static const startsound:Sound = new StartSoundCls();
+
+  // Dead sound.
+  [Embed(source="../assets/dead.mp3")]
+  private static const DeadSoundCls:Class;
+  private static const deadsound:Sound = new DeadSoundCls();
 
   /// Game-related functions
 
   private var scene:Scene;
   private var player:Player;
+  private var _startpos:Point;
 
   public function MainState(width:int, height:int)
   {
     scene = new Scene(width, height);
 
-    player = scene.setLevel(5);
+    player = scene.setLevel(0);
+    scene.setMode(true);
   }
 
   // open()
@@ -47,17 +54,26 @@ public class MainState extends GameState
   // update()
   public override function update():void
   {
-    if (scene.setPlayerState(player)) {
+    scene.update();
+    scene.repaint();
+    if (scene.hasPlayerStarted(player)) {
+      _startpos = new Point(player.bounds.x, player.bounds.y);
+      scene.setMode(false);
+      startsound.play();
+    } else if (player.dead) {
+      player.setPosition(_startpos.x, _startpos.y-Entity.unit);
+      scene.setMode(true);
+      deadsound.play();
+    } else if (scene.hasPlayerGoaled(player)) {
       try {
 	player = scene.setLevel(scene.level+1);
+	scene.setMode(true);
       } catch (e:Error) {
 	if (e.message == "MLG") {
 	  dispatchEvent(new Event(CHANGED));
 	}
       }
     }
-    scene.update();
-    scene.repaint();
   }
 
   // keydown(keycode)

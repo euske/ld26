@@ -9,20 +9,22 @@ import flash.geom.Point;
 //
 public class Enemy extends Actor
 {
-  private var _orbit:Rectangle;
+  public var lethal:Boolean;
 
   // Enemy(scene)
-  public function Enemy(scene:Scene, x:int, y:int, w:int, h:int)
+  public function Enemy(scene:Scene, lethal:Boolean, x:int, y:int, w:int, h:int)
   {
     super(scene, x, y);
-    
-    graphics.beginFill(0x444444);
+    this.lethal = lethal;
+
+    graphics.beginFill(lethal? 0x880000 : 0x444444);
     graphics.drawRect(0, 0, unit, unit);
     graphics.endFill();
     _orbit = new Rectangle(x*unit, y*unit, w*unit, h*unit);
     _dx = +1; _dy = 0;
   }
 
+  private var _orbit:Rectangle;
   private var _dx:int, _dy:int;
 
   protected override function get blinking():Boolean

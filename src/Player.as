@@ -28,11 +28,14 @@ public class Player extends Actor
   private static const MoveSoundCls:Class;
   private static const movesound:Sound = new MoveSoundCls();
 
+  protected static const gravity:int = 2;
+
   // last updated strength.
   private var _strength:int;
-  private var _startpos:Point;
   // _dx, _dy: intent to move.
   private var _dx:int, _dy:int;
+  // _dead:
+  private var _dead:Boolean;
 
   // Player(scene)
   public function Player(scene:Scene, x:int, y:int)
@@ -100,21 +103,12 @@ public class Player extends Actor
     setVelocity(v);
   }
 
-  // die()
-  public function die():void
-  {
-    setPosition(_startpos.x, _startpos.y-unit);
-  }
-
   // setMode
   public override function setMode(construction:Boolean):void
   {
     super.setMode(construction);
-    
-    if (!construction) {
-      _startpos = new Point(bounds.x, bounds.y);
-      _strength = 1;
-    }    
+    _dead = false;
+    _strength = 1;
     _dx = 0;
     _dy = 0;
     
@@ -129,10 +123,14 @@ public class Player extends Actor
     return _construction;
   }
 
-  protected static const gravity:int = 2;
+  public function get dead():Boolean
+  {
+    return _dead;
+  }
   
   public override function update():void
   {
+    var entity:Entity;
     if (_construction) {
       vx = _dx*unit;
       vy = _dy*unit;
@@ -142,6 +140,18 @@ public class Player extends Actor
       // platformer mode.
       vx = _dx;
       vy += gravity;
+      var r:Rectangle = getOffsetRect(vx, vy);
+      if (scene.size.y <= r.bottom) {
+	_dead = true;
+      }
+      for each (entity in scene.getOverlappingEntities(r)) {
+	if (entity is Enemy) {
+	  var enemy:Enemy = Enemy(entity);
+	  if (enemy.lethal) {
+	    _dead = true;
+	  }
+	}
+      }
     }
     super.update();
     if (_construction) {
@@ -150,11 +160,12 @@ public class Player extends Actor
 	resetblink();
       }
     } else {
+      // platformer mode.
       var entities:Array = scene.getOverlappingEntities(getOffsetRect(0, +1));
       if (entities.length != 0) {
 	_strength = 1;
       }
-      for each (var entity:Entity in entities) {
+      for each (entity in entities) {
 	if (entity is Material) {
 	  var material:Material = Material(entity);
 	  _strength = Math.max(_strength, material.strength);

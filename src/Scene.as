@@ -37,10 +37,6 @@ public class Scene extends Sprite
   private var _plate:int = 0;
   private static const maxplate:int = 10;
 
-  // Start sound.
-  [Embed(source="../assets/start.mp3")]
-  private static const StartSoundCls:Class;
-  private static const startsound:Sound = new StartSoundCls();
   // Switch sound.
   [Embed(source="../assets/switch.mp3")]
   private static const SwitchSoundCls:Class;
@@ -49,10 +45,6 @@ public class Scene extends Sprite
   [Embed(source="../assets/push.mp3")]
   private static const PushSoundCls:Class;
   private static const pushsound:Sound = new PushSoundCls();
-  // Dead sound.
-  [Embed(source="../assets/dead.mp3")]
-  private static const DeadSoundCls:Class;
-  private static const deadsound:Sound = new DeadSoundCls();
   // Next level sound.
   [Embed(source="../assets/nextlevel.mp3")]
   private static const NextlevelSoundCls:Class;
@@ -176,7 +168,7 @@ public class Scene extends Sprite
       // tofu
       addEntity(new Material(this, 6, 10, 2, 2, 3, false, 0xffffcc));
       // enemy
-      addActor(new Enemy(this, 5, 5, 10, 8));
+      addActor(new Enemy(this, false, 5, 5, 10, 8));
       // platform
       addPlatform(1, 7, 17, 9);
       player = new Player(this, 7, 3);
@@ -184,7 +176,7 @@ public class Scene extends Sprite
 
     case 5:
       _platesize = new Point(500, 400);
-      updateCaption("STICK ALL MATERIALS!");
+      updateCaption("STICK ALL MATERIALS AND\nATTACK THE ENEMY!");
       // factories
       addFactory(new RoastingFactory(new Rectangle(10, size.y-10-80, 120, 80)));
       // carrot
@@ -194,9 +186,9 @@ public class Scene extends Sprite
       // pork
       addEntity(new Material(this, 6, 5, 3, 2, 1, false, 0xdd88aa, 0xffccee));
       // tomato
-      addEntity(new Material(this, 8, 7, 2, 2, 2, false, 0xff0000));
+      addEntity(new Material(this, 10, 8, 2, 2, 2, false, 0xff0000));
       // enemy
-      addActor(new Enemy(this, 14, 6, 2, 7));
+      addActor(new Enemy(this, true, 14, 4, 2, 7));
       // platform
       addPlatform(0, 10, 18, 5);
       player = new Player(this, 7, 3);
@@ -223,7 +215,6 @@ public class Scene extends Sprite
     }
 
     addActor(player);
-    setMode(true);
     return player;
   }
 
@@ -306,29 +297,15 @@ public class Scene extends Sprite
 	    rect.bottom <= size.y-Entity.unit);
   }
 
-  // setPlayerState(player)
-  public function setPlayerState(player:Player):Boolean
+  // hasPlayerStarted(player)
+  public function hasPlayerStarted(player:Player):Boolean
   {
-    if (_construction) {
-      // construction.
-      if (_start.hasContactY(player) < 0) {
-	// start the platformer.
-	setMode(false);
-	startsound.play();
-      }
-    } else {
-      // platform.
-      if (_goal.hasContactY(player) < 0) {
-	// finish the level.
-	return true;
-      } else if (size.y <= player.bounds.bottom) {
-	// dead.
-	player.die();
-	deadsound.play();
-	setMode(true);
-      }
-    }
-    return false;
+    return (_construction && _start.hasContactY(player));
+  }
+  // hasPlayerGoaled(player)
+  public function hasPlayerGoaled(player:Player):Boolean
+  {
+    return (!_construction && _goal.hasContactY(player));
   }
 
   // setMode(construction)
