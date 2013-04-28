@@ -29,7 +29,7 @@ public class MainState extends GameState
     scene = new Scene(width, height);
 
     scene.clearLevel();
-    player = scene.setLevel(0);
+    player = scene.setLevel(1);
   }
 
   // open()

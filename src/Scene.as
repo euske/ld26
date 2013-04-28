@@ -100,29 +100,29 @@ public class Scene extends Sprite
       player = new Player(this, 7, 3);
       break;
 
+    case 1:
     default:
-      addFactory(new RoastingFactory(new Rectangle(20, height-20-80, 160, 80),
-					   0xff0000, "ROAST"));
-      addFactory(new SeasoningFactory(new Rectangle(width-20-160, height-20-80, 160, 80),
-					    0x008844, "SEASON"));
-      // cucumber
-      addMaterial(new Material(this, 1, 1, 4, 7, 0, 0x00cc00, 0x88ff00));
+      // factories
+      addFactory(new RoastingFactory(new Rectangle(20, size.y-20-80, 160, 80),
+				     0xff0000, "ROAST"));
+      addFactory(new SeasoningFactory(new Rectangle(size.x-20-160, size.y-20-80, 160, 80),
+				      0x008844, "SEASON"));
       // tomato
-      addMaterial(new Material(this, 2, 2, 6, 6, 0, 0xff0000, 0xff8800));
+      addMaterial(new Material(this, 4, 7, 2, 2, 2, 0xff0000, 0xff8800));
+      // cucumber
+      addMaterial(new Material(this, 8, 6, 1, 3, 1, 0x116600, 0x88ff88));
       // beef
-      addMaterial(new Material(this, 3, 3, 5, 5, 0, 0xcc88cc, 0x884444));
+      addMaterial(new Material(this, 5, 10, 3, 3, 0, 0xcc88cc, 0x884444));
       // pork
-      addMaterial(new Material(this, 4, 4, 7, 3, 0, 0xffcccc, 0xcc8888));
+      //addMaterial(new Material(this, 4, 4, 7, 3, 0, 0xffcccc, 0xcc8888));
       // lettuce
-      addMaterial(new Material(this, 5, 5, 7, 7, 0, 0x88ffcc, 0x88ff88));
+      //addMaterial(new Material(this, 5, 5, 7, 7, 0, 0x88ffcc, 0x88ff88));
       // tofu
-      addMaterial(new Material(this, 6, 6, 5, 5, 0, 0xcccccc, 0xffffcc));
+      //addMaterial(new Material(this, 6, 6, 5, 5, 0, 0xcccccc, 0xffffcc));
       // carrot
-      addMaterial(new Material(this, 7, 7, 3, 5, 0, 0xcccc88, 0xcccc88));
-      // chicken
-      // onion
-      // herb?
-      addActor(new Enemy(this, 5, 5));
+      //addMaterial(new Material(this, 7, 7, 3, 5, 0, 0xcccc88, 0xcccc88));
+      //addActor(new Enemy(this, 5, 5));
+      player = new Player(this, 7, 3);
       break;
     }
 
@@ -230,6 +230,7 @@ public class Scene extends Sprite
     if (_construction) {
       for each (factory in factories) {
 	addChild(factory);
+	setChildIndex(factory, 0);
       }
     } else {
       for each (factory in factories) {
