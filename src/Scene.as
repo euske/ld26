@@ -13,15 +13,18 @@ import Material;
 // 
 public class Scene extends Sprite
 {
-  // a list of actors.
-  public var actors:Array = null;
-  // a list of deployed materials.
-  public var materials:Array = null;
-  // a list of factories.
-  public var factories:Array = null;
-
   // scene size
-  private var _size:Point;
+  public var size:Point;
+  // current level
+  public var level:int;
+
+  // a list of actors.
+  private var _actors:Array = null;
+  // a list of deployed materials.
+  private var _materials:Array = null;
+  // a list of factories.
+  private var _factories:Array = null;
+
   // view
   private var _window:Rectangle;
   // caption
@@ -44,16 +47,10 @@ public class Scene extends Sprite
   // Scene(width, height)
   public function Scene(width:int, height:int)
   {
-    _size = new Point(width, height);
+    this.size = new Point(width, height);
     _window = new Rectangle(0, 0, width, height);
 
     updateGraphics(maxplate);
-  }
-
-  // size
-  public function get size():Point
-  {
-    return _size;
   }
   
   // setCenter(p)
@@ -74,13 +71,13 @@ public class Scene extends Sprite
     // Adjust the window position to fit the world.
     if (_window.x < 0) {
       _window.x = 0;
-    } else if (_size.x < _window.x+_window.width) {
-      _window.x = _size.x-_window.width;
+    } else if (size.x < _window.x+_window.width) {
+      _window.x = size.x-_window.width;
     }
     if (_window.y < 0) {
       _window.y = 0;
-    } else if (_size.y < _window.y+_window.height) {
-      _window.y = _size.y-_window.height;
+    } else if (size.y < _window.y+_window.height) {
+      _window.y = size.y-_window.height;
     }
   }
 
@@ -94,6 +91,10 @@ public class Scene extends Sprite
   public function setLevel(level:int):Player
   {
     var player:Player;
+    if (0 <= this.level) {
+      clearLevel();
+    }
+    this.level = level;
 
     switch (level) {
     case 0:
@@ -110,7 +111,6 @@ public class Scene extends Sprite
       break;
 
     case 1:
-    default:
       // factories
       addFactory(new RoastingFactory(new Rectangle(20, size.y-20-80, 160, 80),
 				     0xff0000, "ROAST"));
@@ -136,6 +136,10 @@ public class Scene extends Sprite
       updateCaption("COMBINE MATERIALS AND JUMP HIGHER.");
       player = new Player(this, 7, 3);
       break;
+
+    default:
+      throw new Error("MLG");
+
     }
 
     addActor(player);
@@ -144,47 +148,41 @@ public class Scene extends Sprite
   }
 
   // clearLevel(): erase everything in the current level.
-  public function clearLevel():void
+  private function clearLevel():void
   {
-    if (actors != null) {
-      for each (var actor:Actor in actors) {
-        removeChild(actor);
-      }
+    for each (var actor:Actor in _actors) {
+      removeChild(actor);
     }
-    actors = new Array();
-    if (materials != null) {
-      for each (var material:Material in materials) {
-	removeChild(material);
-      }
+    _actors = new Array();
+    for each (var material:Material in _materials) {
+      removeChild(material);
     }
-    materials = new Array();
-    if (factories != null) {
-      for each (var factory:Factory in materials) {
-	removeChild(factory);
-      }
+    _materials = new Array();
+    for each (var factory:Factory in _materials) {
+      removeChild(factory);
     }
-    factories = new Array();
+    _factories = new Array();
   }
 
   // addActor(actor)
   public function addActor(actor:Actor):void
   {
     addChild(actor);
-    actors.push(actor);
+    _actors.push(actor);
   }
 
   // addMaterial(material)
   public function addMaterial(material:Material):void
   {
     addChild(material);
-    materials.push(material);
+    _materials.push(material);
   }
 
   // addFactory(factory)
   public function addFactory(factory:Factory):void
   {
     addChild(factory);
-    factories.push(factory);
+    _factories.push(factory);
   }
 
   // hasOverlappingPlatforms(rect)
@@ -198,7 +196,7 @@ public class Scene extends Sprite
   public function getOverlappingMaterials(rect:Rectangle):Array
   {
     var contacts:Array = new Array();
-    for each (var material:Material in materials) {
+    for each (var material:Material in _materials) {
       if (material.bounds.intersects(rect)) {
 	contacts.push(material);
       }
@@ -209,21 +207,21 @@ public class Scene extends Sprite
   // isInsideScreen(rect):
   public function isInsideScreen(rect:Rectangle):Boolean
   {
-    return (0 <= rect.left && rect.right <= _size.x &&
-	    0 <= rect.top && rect.bottom <= _size.y);
+    return (0 <= rect.left && rect.right <= size.x &&
+	    0 <= rect.top && rect.bottom <= size.y);
   }
   
   // isInsidePlate(rect):
   public function isInsidePlate(rect:Rectangle):Boolean
   {
     return (Entity.unit <= rect.left && 
-	    rect.right <= _size.x-Entity.unit &&
+	    rect.right <= size.x-Entity.unit &&
 	    Entity.unit <= rect.top && 
-	    rect.bottom <= _size.y-Entity.unit);
+	    rect.bottom <= size.y-Entity.unit);
   }
 
-  // setLevelState(player)
-  public function setLevelState(player:Player):void
+  // setPlayerState(player)
+  public function setPlayerState(player:Player):Boolean
   {
     if (_construction) {
       // construction.
@@ -235,12 +233,13 @@ public class Scene extends Sprite
       // platform.
       if (_goal.hasContact(player)) {
 	// finish the level.
-	setMode(true);
-      } else if (_size.y <= player.bounds.top) {
+	return true;
+      } else if (size.y <= player.bounds.top) {
 	// dead.
 	player.die();
       }
     }
+    return false;
   }
 
   // toggleMode()
@@ -255,16 +254,16 @@ public class Scene extends Sprite
   {
     _construction = construction;
     var factory:Factory;
-    for each (var actor:Actor in actors) {
+    for each (var actor:Actor in _actors) {
       actor.setMode(_construction);
     }
     if (_construction) {
-      for each (factory in factories) {
+      for each (factory in _factories) {
 	addChild(factory);
 	setChildIndex(factory, 0);
       }
     } else {
-      for each (factory in factories) {
+      for each (factory in _factories) {
 	removeChild(factory);
       }
     }
@@ -274,24 +273,24 @@ public class Scene extends Sprite
   public function update():void
   {
     var material:Material;
-    // move actors.
-    for each (material in materials) {
+    // move _actors.
+    for each (material in _materials) {
       material.clearForce();
     }
-    for each (var actor:Actor in actors) {
+    for each (var actor:Actor in _actors) {
       actor.update();
     }
-    for each (material in materials) {
+    for each (material in _materials) {
       material.update();
     }
     if (_construction) {
       // move/update materials.
       var pushed:Boolean = false;
-      for each (material in materials) {
+      for each (material in _materials) {
 	  if (material.vx != 0 || material.vy != 0) {
 	    pushed = true;
 	  }
-	  for each (var factory:Factory in factories) {
+	  for each (var factory:Factory in _factories) {
 	      if (factory.canAcceptMaterial(material)) {
 		factory.putMaterial(material);
 	      }
@@ -301,21 +300,21 @@ public class Scene extends Sprite
 	pushsound.play();
       }
       // detect grouped materials.
-      for each (material in materials) {
+      for each (material in _materials) {
 	  material.clearConnection();
 	}
-      for each (material in materials) {
-	  for each (var m:Material in materials) {
+      for each (material in _materials) {
+	  for each (var m:Material in _materials) {
 	      if (material.hasContact(m)) {
 		material.makeConnection(m);
 	      }
 	    }
 	}
-      for each (material in materials) {
+      for each (material in _materials) {
 	  material.fixateConnection();
 	}
       var groups:Array = new Array();
-      for each (material in materials) {
+      for each (material in _materials) {
 	  if (material.group != null && groups.indexOf(material.group) == -1) {
 	    groups.push(material.group);
 	  }
@@ -332,10 +331,10 @@ public class Scene extends Sprite
   // repaint()
   public function repaint():void
   {
-    for each (var actor:Actor in actors) {
+    for each (var actor:Actor in _actors) {
       actor.repaint();
     }
-    for each (var material:Material in materials) {
+    for each (var material:Material in _materials) {
       material.repaint();
     }
     // update the platform.
@@ -367,7 +366,7 @@ public class Scene extends Sprite
       removeChild(_caption);
     }
     _caption = Main.Font.render(title, 0xffffff, 2);
-    _caption.x = (_size.x-_caption.width)/2;
+    _caption.x = (size.x-_caption.width)/2;
     _caption.y = 8;
     addChild(_caption);
   }

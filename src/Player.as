@@ -104,7 +104,7 @@ public class Player extends Actor
   {
     deadsound.play();
     bounds.x = _startpos.x;
-    bounds.y = _startpos.y;
+    bounds.y = _startpos.y-unit;
     _strength = 1;
   }
 

@@ -5,15 +5,15 @@ import flash.events.Event;
 import flash.ui.Keyboard;
 import GameState;
 
-//  TitleState
+//  FinishState
 // 
-public class TitleState extends GameState
+public class FinishState extends GameState
 {
   private var text:Bitmap;
 
-  public function TitleState(width:int, height:int)
+  public function FinishState(width:int, height:int)
   {
-    text = Main.Font.render("ZEN PLATE\nPRESS ENTER TO START", 0xff0000, 2);
+    text = Main.Font.render("CONGRATS!\nYER SO MLG!!", 0xffff00, 3);
     text.x = (width-text.width)/2;
     text.y = (height-text.height)/2;
   }

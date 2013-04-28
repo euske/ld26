@@ -85,6 +85,8 @@ public class Main extends Sprite
   {
     if (e.currentTarget is TitleState) {
       setGameState(new MainState(stage.stageWidth, stage.stageHeight));
+    } else if (e.currentTarget is MainState) {
+      setGameState(new FinishState(stage.stageWidth, stage.stageHeight));
     } else {
       setGameState(new TitleState(stage.stageWidth, stage.stageHeight));
     }
@@ -140,9 +142,10 @@ public class Main extends Sprite
     }
   }
 
+  // init()
   protected function init():void
   {
-    setGameState(new MainState(stage.stageWidth, stage.stageHeight));
+    onStateChanged(new Event(GameState.CHANGED));
   }
 
 }
