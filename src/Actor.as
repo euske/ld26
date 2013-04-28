@@ -50,21 +50,21 @@ public class Actor extends Entity
   {
     if (_construction) {
       // construction mode.
-      _dx *= unit;
-      _dy *= unit;
-      var r:Rectangle = getOffsetRect(_dx, _dy);
+      var dx:int = _dx*unit;
+      var dy:int = _dy*unit;
+      var r:Rectangle = getOffsetRect(dx, dy);
       var allowed:Boolean = scene.isInsideScreen(r);
       var entities:Array = scene.getOverlappingEntities(r);
       var entity:Entity;
       for each (entity in entities) {
-	  if (!entity.applyForce(_dx, _dy)) {
+	  if (!entity.applyForce(dx, dy)) {
 	    allowed = false;
 	    break;
 	  }
 	}
       if (allowed) {
-	vx = _dx;
-	vy = _dy;
+	vx = dx;
+	vy = dy;
       } else {
 	vx = 0;
 	vy = 0;
@@ -72,8 +72,6 @@ public class Actor extends Entity
 	  entity.clearForce();
 	}
       }
-      _dx = 0;
-      _dy = 0;
     } else {
       // platformer mode.
       vy += gravity;

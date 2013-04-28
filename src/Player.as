@@ -133,6 +133,8 @@ public class Player extends Actor
   {
     super.update();
     if (_construction) {
+      _dx = 0;
+      _dy = 0;
       _blink++;
       var phase:int = (_blink % (cycle*2));
       this.alpha = ((phase < cycle)? (cycle-phase) : (phase-cycle))/(cycle-1);

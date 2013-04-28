@@ -156,7 +156,7 @@ public class Scene extends Sprite
       // factories
       addFactory(new SeasoningFactory(new Rectangle(size.x-10-120, size.y-10-80, 120, 80)));
       // cucumber
-      addEntity(new Material(this, 7, 10, 1, 3, 1, false, 0x116600));
+      addEntity(new Material(this, 6, 10, 1, 3, 1, false, 0x116600));
       // pork
       addEntity(new Material(this, 12, 8, 3, 2, 1, false, 0xffaacc, 0xffccee));
       // fish
