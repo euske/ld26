@@ -225,13 +225,13 @@ public class Scene extends Sprite
   {
     if (_construction) {
       // construction.
-      if (_start.hasContact(player)) {
+      if (_start.hasContactY(player) < 0) {
 	// start the platformer.
 	setMode(false);
       }
     } else {
       // platform.
-      if (_goal.hasContact(player)) {
+      if (_goal.hasContactY(player) < 0) {
 	// finish the level.
 	return true;
       } else if (size.y <= player.bounds.top) {

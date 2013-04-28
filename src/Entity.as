@@ -32,14 +32,34 @@ public class Entity extends Sprite
   // hasContact(entity): returns true if the entity has a contact.
   public function hasContact(entity:Entity):Boolean
   {
-    return (((bounds.left == entity.bounds.right ||
-	      bounds.right == entity.bounds.left) &&
-	     !(entity.bounds.bottom <= bounds.top ||
-	       bounds.bottom <= entity.bounds.top)) ||
-	    ((bounds.top == entity.bounds.bottom ||
-	      bounds.bottom == entity.bounds.top) &&
-	     !(entity.bounds.right <= bounds.left ||
-	       bounds.right <= entity.bounds.left)));
+    return (hasContactX(entity) != 0 || 
+	    hasContactY(entity) != 0);
+  }
+  public function hasContactX(entity:Entity):int
+  {
+    if (entity.bounds.bottom <= bounds.top ||
+	bounds.bottom <= entity.bounds.top) {
+      return 0;
+    } else if (bounds.left == entity.bounds.right) {
+      return -1;		// entity is left
+    } else if (bounds.right == entity.bounds.left) {
+      return +1;		// entity is right
+    } else {
+      return 0;
+    }
+  }
+  public function hasContactY(entity:Entity):int
+  {
+    if (entity.bounds.right <= bounds.left ||
+	bounds.right <= entity.bounds.left) {
+      return 0;
+    } else if (bounds.top == entity.bounds.bottom) {
+      return -1; 		// entity is top
+    } else if (bounds.bottom == entity.bounds.top) {
+      return +1;		// entity is bottom.
+    } else {
+      return 0;
+    }
   }
 
   // update(): update the position.
