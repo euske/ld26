@@ -64,6 +64,11 @@ public class Entity extends Sprite
     }
   }
 
+  // setMode(construction)
+  public virtual function setMode(construction:Boolean):void
+  {
+  }
+
   // setPosition():
   public virtual function setPosition(x:int, y:int):void
   {

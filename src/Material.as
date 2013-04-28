@@ -13,6 +13,8 @@ public class Material extends Entity
   public var group:Array;
   // shape:
   public var shape:int;
+  // perishable:
+  public var perishable:Boolean;
   // raw material color.
   public var rawcolor:uint;
   // roasted material color.
@@ -26,9 +28,9 @@ public class Material extends Entity
   private var _glow:Glow;
 
   // Connected sound.
-  [Embed(source="../assets/connected.mp3")]
-  private static const ConnectedSoundCls:Class;
-  private static const connectedsound:Sound = new ConnectedSoundCls();
+  [Embed(source="../assets/connect1.mp3")]
+  private static const Connect1SoundCls:Class;
+  private static const connect1sound:Sound = new Connect1SoundCls();
   // Roasted sound.
   [Embed(source="../assets/roast.mp3")]
   private static const RoastSoundCls:Class;
@@ -42,10 +44,12 @@ public class Material extends Entity
   // Material(scene, pt)
   public function Material(scene:Scene, 
 			   x:int, y:int, width:int, height:int, 
-			   shape:int, rawcolor:uint, roastedcolor:uint=0)
+			   shape:int, perishable:Boolean,
+			   rawcolor:uint, roastedcolor:uint=0)
   {
     super(scene, new Rectangle(x*unit, y*unit, width*unit, height*unit));
     this.shape = shape;
+    this.perishable = perishable;
     this.rawcolor = rawcolor;
     this.roastedcolor = roastedcolor;
     _glow = new Glow(this);
@@ -117,7 +121,7 @@ public class Material extends Entity
     var strength:int = (this.group == null)? 1 : this.group.length;
     if (_strength < strength && 
 	this.group != null && this.group[0] == this) {
-      connectedsound.play();
+      connect1sound.play();
     }
     if (_strength != strength) {
       _strength = strength;
@@ -134,7 +138,7 @@ public class Material extends Entity
   // roast()
   public function roast():void
   {
-    if (!_roasted && roastedcolor != 0) {
+    if (!_seasoned && !_roasted && roastedcolor != 0) {
       _roasted = true;
       roastsound.play();
       bounds.width -= unit;
@@ -146,11 +150,18 @@ public class Material extends Entity
   // season()
   public function season():void
   {
-    if (!_seasoned) {
+    if (!_roasted && !_seasoned) {
       _seasoned = true;
       seasonsound.play();
       updateGraphics();
     }
+  }
+
+  // setMode(construction)
+  private var _construction:Boolean;
+  public override function setMode(construction:Boolean):void
+  {
+    _construction = construction;
   }
 
   // blinking status.

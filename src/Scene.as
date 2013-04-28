@@ -114,9 +114,9 @@ public class Scene extends Sprite
       _platesize = new Point(300, 300);
       updateCaption("PUSH MATERIALS WITH CURSOR AND\nHOP ONTO THE LEFT PLATFORM.");
       // carrot
-      addEntity(new Material(this, 7, 11, 3, 1, 0, 0xff8800));
+      addEntity(new Material(this, 7, 11, 3, 1, 0, false, 0xff8800));
       // cucumber
-      addEntity(new Material(this, 11, 8, 1, 3, 1, 0x116600));
+      addEntity(new Material(this, 11, 8, 1, 3, 1, false, 0x116600));
       // platform
       addPlatform(4, 10, 13, 10);
       player = new Player(this, 7, 3);
@@ -126,9 +126,9 @@ public class Scene extends Sprite
       _platesize = new Point(400, 400);
       updateCaption("STICK MATERIALS TOGETHER AND\nJUMP HIGHER.");
       // tomato
-      addEntity(new Material(this, 7, 8, 2, 2, 2, 0xff0000));
+      addEntity(new Material(this, 7, 8, 2, 2, 2, false, 0xff0000));
       // cucumber
-      addEntity(new Material(this, 11, 7, 1, 3, 1, 0x116600));
+      addEntity(new Material(this, 11, 7, 1, 3, 1, false, 0x116600));
       // platform
       addPlatform(3, 9, 15, 7);
       player = new Player(this, 7, 3);
@@ -136,15 +136,49 @@ public class Scene extends Sprite
 
     case 2:
       _platesize = new Point(500, 400);
-      updateCaption("ROASTING MAKES FOOD SMALLER BUT STICKABLE.");
+      updateCaption("ROASTING MAKES FOOD SMALLER\nBUT STICKABLE.");
       // factories
       addFactory(new RoastingFactory(new Rectangle(10, size.y-10-80, 120, 80)));
       // tomato
-      addEntity(new Material(this, 7, 6, 2, 2, 2, 0xff0000));
+      addEntity(new Material(this, 7, 6, 2, 2, 2, false, 0xff0000));
       // cucumber
-      addEntity(new Material(this, 13, 7, 1, 3, 1, 0x116600));
+      addEntity(new Material(this, 13, 7, 1, 3, 1, false, 0x116600));
       // pork
-      addEntity(new Material(this, 6, 10, 3, 2, 0, 0xffaacc, 0xffccee));
+      addEntity(new Material(this, 6, 10, 3, 2, 0, false, 0xffaacc, 0xffccee));
+      addPlatform(0, 10, 18, 10);
+      player = new Player(this, 7, 3);
+      break;
+
+    case 3:
+      _platesize = new Point(500, 400);
+      updateCaption("SEASONING MAKES FOOD LAST LONGER\nBUT NOT STICKABLE.");
+      // factories
+      addFactory(new SeasoningFactory(new Rectangle(size.x-10-120, size.y-10-80, 120, 80)));
+      // cucumber
+      addEntity(new Material(this, 7, 10, 1, 3, 1, false, 0x116600));
+      // pork
+      addEntity(new Material(this, 12, 8, 3, 2, 0, false, 0xffaacc, 0xffccee));
+      // fish
+      addEntity(new Material(this, 6, 6, 3, 1, 0, true, 0x44aacc));
+      addPlatform(0, 7, 18, 10);
+      player = new Player(this, 7, 3);
+      break;
+
+      //case 4:
+      updateCaption("ENEMY IS ANNOYING.");
+      // enemy
+      break;
+
+      //case 5:
+      updateCaption("ATTACK ENEMY BY STICK 4 FOODS!");
+      // enemy
+      break;
+
+      //case 6:
+      updateCaption("JUST DO IT.");
+      break;
+
+    default:
       //addFactory(new SeasoningFactory(new Rectangle(size.x-20-160, size.y-20-80, 160, 80),
       //0x008844, "SEASON"));
       // beef
@@ -158,12 +192,6 @@ public class Scene extends Sprite
       // carrot
       //addEntity(new Material(this, 7, 7, 3, 5, 0, 0xcccc88, 0xcccc88));
       //addActor(new Enemy(this, 5, 5));
-      // 
-      addPlatform(0, 10, 18, 10);
-      player = new Player(this, 7, 3);
-      break;
-
-    default:
       throw new Error("MLG");
 
     }
@@ -278,6 +306,9 @@ public class Scene extends Sprite
     var factory:Factory;
     for each (var actor:Actor in _actors) {
       actor.setMode(_construction);
+    }
+    for each (var entity:Entity in _entities) {
+      entity.setMode(_construction);
     }
     if (_construction) {
       for each (factory in _factories) {

@@ -8,9 +8,9 @@ import Factory;
 //
 public class SeasoningFactory extends Factory
 {
-  public function SeasoningFactory(bounds:Rectangle, color:uint, name:String)
+  public function SeasoningFactory(bounds:Rectangle)
   {
-    super(bounds, color, name);
+    super(bounds, 0xddcc44, "SEASON");
   }
 
   // putMaterial(material): makes the material seasoned.

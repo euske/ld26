@@ -23,8 +23,9 @@ public class Actor extends Entity
   }
 
   // setMode(construction)
-  public virtual function setMode(construction:Boolean):void
+  public override function setMode(construction:Boolean):void
   {
+    super.setMode(construction);
     _construction = construction;
     if (construction) {
       setPosition(Math.floor(bounds.x/unit)*unit,
