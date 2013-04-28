@@ -2,6 +2,7 @@ package {
 
 import flash.display.Bitmap;
 import flash.events.Event;
+import flash.media.Sound;
 import flash.ui.Keyboard;
 import flash.geom.Rectangle;
 import flash.geom.Point;
@@ -18,6 +19,10 @@ public class MainState extends GameState
   [Embed(source="../assets/player.png", mimeType="image/png")]
   private static const PlayerImageCls:Class;
   private static const playerimage:Bitmap = new PlayerImageCls();
+  // Next level sound.
+  [Embed(source="../assets/nextlevel.mp3")]
+  private static const NextlevelSoundCls:Class;
+  private static const nextlevelsound:Sound = new NextlevelSoundCls();
 
   /// Game-related functions
 
@@ -49,6 +54,7 @@ public class MainState extends GameState
     if (scene.setPlayerState(player)) {
       try {
 	player = scene.setLevel(scene.level+1);
+	nextlevelsound.play();
       } catch (e:Error) {
 	if (e.message == "MLG") {
 	  dispatchEvent(new Event(CHANGED));

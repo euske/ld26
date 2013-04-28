@@ -4,6 +4,7 @@ import flash.display.Sprite;
 import flash.display.Stage;
 import flash.display.StageScaleMode;
 import flash.display.DisplayObject;
+import flash.media.Sound;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.text.TextField;
@@ -23,6 +24,11 @@ public class Main extends Sprite
   private var _paused:Boolean;
 
   public static var Font:AtariFont = new AtariFont();
+
+  // Start sound.
+  [Embed(source="../assets/start.mp3")]
+  private static const StartSoundCls:Class;
+  private static const startsound:Sound = new StartSoundCls();
 
   // Main()
   public function Main()
@@ -84,6 +90,7 @@ public class Main extends Sprite
   private function onStateChanged(e:Event):void
   {
     if (e.currentTarget is TitleState) {
+      startsound.play();
       setGameState(new MainState(stage.stageWidth, stage.stageHeight));
     } else if (e.currentTarget is MainState) {
       setGameState(new FinishState(stage.stageWidth, stage.stageHeight));
