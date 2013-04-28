@@ -167,7 +167,7 @@ public class Scene extends Sprite
       break;
 
     case 4:
-      _platesize = new Point(500, 400);
+      _platesize = new Point(450, 400);
       updateCaption("ENEMY IS ANNOYING.");
       // pork
       addEntity(new Material(this, 7, 6, 3, 2, 1, false, 0xffaacc, 0xffccee));
@@ -176,15 +176,30 @@ public class Scene extends Sprite
       // tofu
       addEntity(new Material(this, 6, 10, 2, 2, 3, false, 0xffffcc));
       // enemy
-      addActor(new Enemy(this, 5, 5, 9, 7));
+      addActor(new Enemy(this, 5, 5, 10, 8));
       // platform
-      addPlatform(0, 7, 18, 10);
+      addPlatform(1, 7, 17, 9);
       player = new Player(this, 7, 3);
       break;
 
-      //case 5:
-      updateCaption("ATTACK ENEMY BY STICK 4 FOODS!");
+    case 5:
+      _platesize = new Point(500, 400);
+      updateCaption("STICK ALL MATERIALS!");
+      // factories
+      addFactory(new RoastingFactory(new Rectangle(10, size.y-10-80, 120, 80)));
+      // carrot
+      addEntity(new Material(this, 7, 11, 3, 1, 0, false, 0xff8800));
+      // cucumber
+      addEntity(new Material(this, 13, 8, 1, 3, 1, false, 0x116600));
+      // pork
+      addEntity(new Material(this, 6, 5, 3, 2, 1, false, 0xdd88aa, 0xffccee));
+      // tomato
+      addEntity(new Material(this, 8, 7, 2, 2, 2, false, 0xff0000));
       // enemy
+      addActor(new Enemy(this, 14, 6, 2, 7));
+      // platform
+      addPlatform(0, 10, 18, 5);
+      player = new Player(this, 7, 3);
       break;
 
       //case 6:

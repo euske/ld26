@@ -31,6 +31,9 @@ public class Material extends Entity
   [Embed(source="../assets/connect1.mp3")]
   private static const Connect1SoundCls:Class;
   private static const connect1sound:Sound = new Connect1SoundCls();
+  [Embed(source="../assets/connect2.mp3")]
+  private static const Connect2SoundCls:Class;
+  private static const connect2sound:Sound = new Connect2SoundCls();
   // Roasted sound.
   [Embed(source="../assets/roast.mp3")]
   private static const RoastSoundCls:Class;
@@ -122,7 +125,11 @@ public class Material extends Entity
     var strength:int = (this.group == null)? 1 : this.group.length;
     if (_strength < strength && 
 	this.group != null && this.group[0] == this) {
-      connect1sound.play();
+      if (4 <= strength) {
+	connect2sound.play();
+      } else {
+	connect1sound.play();
+      }
     }
     if (_strength != strength) {
       _strength = strength;

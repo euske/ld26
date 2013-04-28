@@ -31,6 +31,8 @@ public class Player extends Actor
   // last updated strength.
   private var _strength:int;
   private var _startpos:Point;
+  // _dx, _dy: intent to move.
+  private var _dx:int, _dy:int;
 
   // Player(scene)
   public function Player(scene:Scene, x:int, y:int)
@@ -113,8 +115,9 @@ public class Player extends Actor
       _startpos = new Point(bounds.x, bounds.y);
       _strength = 1;
     }    
+    _dx = 0;
+    _dy = 0;
     
-    this.alpha = 1.0;
     graphics.clear();
     graphics.beginFill(0x00cc00);
     graphics.drawRect(0, 0, unit, unit);
@@ -125,16 +128,27 @@ public class Player extends Actor
   {
     return _construction;
   }
+
+  protected static const gravity:int = 2;
   
   public override function update():void
   {
+    if (_construction) {
+      vx = _dx*unit;
+      vy = _dy*unit;
+      _dx = 0;
+      _dy = 0;
+    } else {
+      // platformer mode.
+      vx = _dx;
+      vy += gravity;
+    }
     super.update();
     if (_construction) {
       if (moving) {
 	movesound.play();
+	resetblink();
       }
-      _dx = 0;
-      _dy = 0;
     } else {
       var entities:Array = scene.getOverlappingEntities(getOffsetRect(0, +1));
       if (entities.length != 0) {

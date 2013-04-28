@@ -11,8 +11,6 @@ public class Actor extends Entity
 {
   // _construction:
   protected var _construction:Boolean = true;
-  // _dx, _dy: intent to move.
-  protected var _dx:int, _dy:int;
   
   // Actor(scene, x, y)
   public function Actor(scene:Scene, x:int, y:int)
@@ -29,10 +27,9 @@ public class Actor extends Entity
       setPosition(Math.floor(bounds.x/unit)*unit,
 		  Math.floor(bounds.y/unit)*unit);
     }
+    this.alpha = 1.0;
     vx = 0;
     vy = 0;
-    _dx = 0;
-    _dy = 0;
   }
 
   // setVelocity()
@@ -50,41 +47,34 @@ public class Actor extends Entity
   {
     return false;
   }
-
-  protected virtual function get gravity():int
+  protected function resetblink():void
   {
-    return 2;
+    _blink = 0;
   }
 
   // update()
   public override function update():void
   {
-    if (moving) {
-      _blink = 0;
-    }
     if (blinking) {
       var phase:int = (_blink % (cycle*2));
       this.alpha = ((phase < cycle)? (cycle-phase) : (phase-cycle))/(cycle-1);
       _blink++;
+    } else {
+      resetblink();
     }
     if (_construction) {
-      // construction mode.
-      var dx:int = _dx*unit;
-      var dy:int = _dy*unit;
-      var r:Rectangle = getOffsetRect(dx, dy);
+      // push things.
+      var r:Rectangle = getOffsetRect(vx, vy);
       var allowed:Boolean = scene.isInsideScreen(r);
       var entities:Array = scene.getOverlappingEntities(r);
       var entity:Entity;
       for each (entity in entities) {
-	  if (!entity.applyForce(dx, dy)) {
+	  if (!entity.applyForce(vx, vy)) {
 	    allowed = false;
 	    break;
 	  }
 	}
-      if (allowed) {
-	vx = dx;
-	vy = dy;
-      } else {
+      if (!allowed) {
 	vx = 0;
 	vy = 0;
 	for each (entity in entities) {
@@ -92,9 +82,6 @@ public class Actor extends Entity
 	}
       }
     } else {
-      // platformer mode.
-      vy += gravity;
-      vx = _dx;
       while (vx != 0 || vy != 0) {
 	if (!isBlocked(vx, vy)) break;
        	vx = (vx < 0)? Math.ceil(vx*0.9) : Math.floor(vx*0.9);
@@ -105,7 +92,7 @@ public class Actor extends Entity
   }
 
   // isBlocked(dx, dy): returns true if movement (dx,dy) is blocked.
-  private function isBlocked(dx:int, dy:int):Boolean
+  protected function isBlocked(dx:int, dy:int):Boolean
   {
     var r:Rectangle = getOffsetRect(dx, dy);
     if (!scene.isInsideScreen(r) ||

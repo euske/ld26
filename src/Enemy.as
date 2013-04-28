@@ -20,34 +20,35 @@ public class Enemy extends Actor
     graphics.drawRect(0, 0, unit, unit);
     graphics.endFill();
     _orbit = new Rectangle(x*unit, y*unit, w*unit, h*unit);
+    _dx = +1; _dy = 0;
   }
+
+  private var _dx:int, _dy:int;
 
   protected override function get blinking():Boolean
   {
     return !_construction;
   }
   
-  protected override function get gravity():int
-  {
-    return 0;
-  }
-
   // update()
   public override function update():void
   {
-    if ((_orbit.left == bounds.left && _orbit.top == bounds.top) ||
-	(_orbit.right == bounds.right && _orbit.top == bounds.top) ||
-	(_orbit.left == bounds.left && _orbit.bottom == bounds.bottom) ||
-	(_orbit.right == bounds.right && _orbit.bottom == bounds.bottom)) {
-      // turn 90 degree (clockwise)
-      if (_dx == 0 && _dy == 0) {
-	_dx = 1;
-	_dy = 0;
-      } else {
-	var v:int = _dx;
-	_dx = -_dy;
-	_dy = v;
-      }
+    var r:Rectangle = getOffsetRect(_dx*unit, _dy*unit);
+    if (_orbit.right <= r.left) {
+      _dx = 0; _dy = +1;
+    } else if (_orbit.bottom <= r.top) {
+      _dx = -1; _dy = 0;
+    } else if (r.right <= _orbit.left) {
+      _dx = 0; _dy = -1;
+    } else if (r.bottom <= _orbit.top) {
+      _dx = +1; _dy = 0;
+    }
+    if (_construction) {
+      vx = _dx*unit;
+      vy = _dy*unit;
+    } else {
+      vx = _dx*8;
+      vy = _dy*8;
     }
     super.update();
   }
