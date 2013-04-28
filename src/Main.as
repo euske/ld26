@@ -60,7 +60,7 @@ public class Main extends Sprite
   // setPauseState(paused)
   private function setPauseState(paused:Boolean):void
   {
-    _paused = paused;
+    _paused = paused;    
   }
 
   // setGameState(state)

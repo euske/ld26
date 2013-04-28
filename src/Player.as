@@ -111,11 +111,7 @@ public class Player extends Actor
     _strength = 1;
     _dx = 0;
     _dy = 0;
-    
-    graphics.clear();
-    graphics.beginFill(0x00cc00);
-    graphics.drawRect(0, 0, unit, unit);
-    graphics.endFill();
+    updateGraphics();
   }
 
   protected override function get blinking():Boolean
@@ -126,6 +122,11 @@ public class Player extends Actor
   public function get dead():Boolean
   {
     return _dead;
+  }
+
+  public function get hyper():Boolean
+  {
+    return (4 <= _strength);
   }
   
   public override function update():void
@@ -147,7 +148,9 @@ public class Player extends Actor
       for each (entity in scene.getOverlappingEntities(r)) {
 	if (entity is Enemy) {
 	  var enemy:Enemy = Enemy(entity);
-	  if (enemy.lethal) {
+	  if (hyper) {
+	    enemy.die();
+	  } else if (enemy.lethal && !enemy.dead) {
 	    _dead = true;
 	  }
 	}
@@ -162,15 +165,27 @@ public class Player extends Actor
     } else {
       // platformer mode.
       var entities:Array = scene.getOverlappingEntities(getOffsetRect(0, +1));
-      if (entities.length != 0) {
-	_strength = 1;
-      }
       for each (entity in entities) {
 	if (entity is Material) {
 	  var material:Material = Material(entity);
 	  _strength = Math.max(_strength, material.strength);
 	}
       }
+      updateGraphics();
+    }
+  }
+
+  private function updateGraphics():void
+  {
+    graphics.clear();
+    if (hyper) {
+      graphics.beginFill(0x0000cc);
+      graphics.drawEllipse(0, 0, unit, unit);
+      graphics.endFill();
+    } else {
+      graphics.beginFill(0x00cc00);
+      graphics.drawRect(0, 0, unit, unit);
+      graphics.endFill();
     }
   }
 }

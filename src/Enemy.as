@@ -1,6 +1,7 @@
 package {
 
 import flash.display.Bitmap;
+import flash.media.Sound;
 import flash.events.Event;
 import flash.geom.Rectangle;
 import flash.geom.Point;
@@ -9,6 +10,11 @@ import flash.geom.Point;
 //
 public class Enemy extends Actor
 {
+  // Explosion sound.
+  [Embed(source="../assets/explosion.mp3")]
+  private static const ExplosionSoundCls:Class;
+  private static const explosionsound:Sound = new ExplosionSoundCls();
+
   public var lethal:Boolean;
 
   // Enemy(scene)
@@ -17,15 +23,46 @@ public class Enemy extends Actor
     super(scene, x, y);
     this.lethal = lethal;
 
-    graphics.beginFill(lethal? 0x880000 : 0x444444);
-    graphics.drawRect(0, 0, unit, unit);
-    graphics.endFill();
     _orbit = new Rectangle(x*unit, y*unit, w*unit, h*unit);
     _dx = +1; _dy = 0;
   }
 
+  // setMode
+  public override function setMode(construction:Boolean):void
+  {
+    _dead = false;
+    updateGraphics();
+  }
+
+  // die
+  public function die():void
+  {
+    if (!_dead) {
+      _dead = true;
+      updateGraphics();
+      explosionsound.play();
+    }
+  }
+
+  // dead
+  public function get dead():Boolean
+  {
+    return _dead;
+  }
+
+  private var _dead:Boolean;
   private var _orbit:Rectangle;
   private var _dx:int, _dy:int;
+
+  private function updateGraphics():void
+  {
+    graphics.clear();
+    if (!_dead) {
+      graphics.beginFill(lethal? 0x880000 : 0x444444);
+      graphics.drawRect(0, 0, unit, unit);
+      graphics.endFill();
+    }
+  }
 
   protected override function get blinking():Boolean
   {
@@ -35,6 +72,8 @@ public class Enemy extends Actor
   // update()
   public override function update():void
   {
+    if (_dead) return;
+
     var r:Rectangle = getOffsetRect(_dx*unit, _dy*unit);
     if (_orbit.right <= r.left) {
       _dx = 0; _dy = +1;

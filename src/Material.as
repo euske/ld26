@@ -68,7 +68,6 @@ public class Material extends Entity
     if (!scene.isInsidePlate(r)) return false;
     for each (var entity:Entity in scene.getOverlappingEntities(r)) {
       if (entity != this) {
-	Main.log("entity="+entity);
 	if (!entity.applyForce(dx, dy)) return false;
       }
     }
@@ -263,7 +262,7 @@ class Glow extends Shape
       graphics.drawRect(0, 0, sprite.width, sprite.height);
       break;
     case 3:
-      graphics.lineStyle(4, 0xff8800);
+      graphics.lineStyle(4, 0xdd8800);
       graphics.drawRect(0, 0, sprite.width, sprite.height);
       break;
     default:

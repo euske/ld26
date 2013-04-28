@@ -3,6 +3,7 @@ package {
 import flash.display.Bitmap;
 import flash.events.Event;
 import flash.media.Sound;
+import flash.media.SoundChannel;
 import flash.ui.Keyboard;
 import flash.geom.Rectangle;
 import flash.geom.Point;
@@ -15,6 +16,19 @@ import Factory;
 //
 public class MainState extends GameState
 {
+  // Music
+  [Embed(source="../assets/music1.mp3")]
+  private static const Music1SoundCls:Class;
+  private static const music1sound:Sound = new Music1SoundCls();
+  [Embed(source="../assets/music2.mp3")]
+  private static const Music2SoundCls:Class;
+  private static const music2sound:Sound = new Music2SoundCls();
+
+  // Level sound.
+  [Embed(source="../assets/nextlevel.mp3")]
+  private static const LevelSoundCls:Class;
+  private static const levelsound:Sound = new LevelSoundCls();
+
   // Start sound.
   [Embed(source="../assets/start.mp3")]
   private static const StartSoundCls:Class;
@@ -34,20 +48,48 @@ public class MainState extends GameState
   public function MainState(width:int, height:int)
   {
     scene = new Scene(width, height);
-
-    player = scene.setLevel(0);
-    scene.setMode(true);
   }
 
   // open()
   public override function open():void
   {
+    player = scene.setLevel(5);
+    scene.setMode(true);
+    startMusic(music1sound);
+
     addChild(scene);
+  }
+
+  private var _music:Sound;
+  private var _channel:SoundChannel;
+  
+  private function startMusic(music:Sound):void
+  {
+    if (_channel != null) {
+      stopMusic();
+    }
+    _music = music;
+    _channel = music.play();
+    _channel.addEventListener(Event.SOUND_COMPLETE, loopMusic);
+  }
+  private function stopMusic():void
+  {
+    _channel.stop();
+    _channel.removeEventListener(Event.SOUND_COMPLETE, loopMusic);
+    _channel = null;
+  }
+  private function loopMusic(e:Event):void
+  {
+    var channel:SoundChannel = SoundChannel(e.currentTarget);
+    if (channel == _channel) {
+      startMusic(_music);
+    }
   }
 
   // close()
   public override function close():void
   {
+    stopMusic();
     removeChild(scene);
   }
 
@@ -58,16 +100,20 @@ public class MainState extends GameState
     scene.repaint();
     if (scene.hasPlayerStarted(player)) {
       _startpos = new Point(player.bounds.x, player.bounds.y);
-      scene.setMode(false);
       startsound.play();
+      scene.setMode(false);
+      startMusic(music2sound);
     } else if (player.dead) {
       player.setPosition(_startpos.x, _startpos.y-Entity.unit);
-      scene.setMode(true);
       deadsound.play();
+      scene.setMode(true);
+      startMusic(music1sound);
     } else if (scene.hasPlayerGoaled(player)) {
+      levelsound.play();
       try {
 	player = scene.setLevel(scene.level+1);
 	scene.setMode(true);
+	startMusic(music1sound);
       } catch (e:Error) {
 	if (e.message == "MLG") {
 	  dispatchEvent(new Event(CHANGED));

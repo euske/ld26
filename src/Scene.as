@@ -37,18 +37,10 @@ public class Scene extends Sprite
   private var _plate:int = 0;
   private static const maxplate:int = 10;
 
-  // Switch sound.
-  [Embed(source="../assets/switch.mp3")]
-  private static const SwitchSoundCls:Class;
-  private static const switchsound:Sound = new SwitchSoundCls();
   // Push sound.
   [Embed(source="../assets/push.mp3")]
   private static const PushSoundCls:Class;
   private static const pushsound:Sound = new PushSoundCls();
-  // Next level sound.
-  [Embed(source="../assets/nextlevel.mp3")]
-  private static const NextlevelSoundCls:Class;
-  private static const nextlevelsound:Sound = new NextlevelSoundCls();
 
   // Scene(width, height)
   public function Scene(width:int, height:int)
@@ -98,8 +90,6 @@ public class Scene extends Sprite
     if (0 <= this.level) {
       clearLevel();
     }
-    this.level = level;
-    nextlevelsound.play();
 
     switch (level) {
     case 0:
@@ -188,7 +178,7 @@ public class Scene extends Sprite
       // tomato
       addEntity(new Material(this, 10, 8, 2, 2, 2, false, 0xff0000));
       // enemy
-      addActor(new Enemy(this, true, 14, 4, 2, 7));
+      addActor(new Enemy(this, true, 15, 2, 2, 5));
       // platform
       addPlatform(0, 10, 18, 5);
       player = new Player(this, 7, 3);
@@ -213,6 +203,7 @@ public class Scene extends Sprite
       throw new Error("MLG");
 
     }
+    this.level = level;
 
     addActor(player);
     return player;
@@ -300,12 +291,12 @@ public class Scene extends Sprite
   // hasPlayerStarted(player)
   public function hasPlayerStarted(player:Player):Boolean
   {
-    return (_construction && _start.hasContactY(player));
+    return (_construction && _start.hasContactY(player) < 0);
   }
   // hasPlayerGoaled(player)
   public function hasPlayerGoaled(player:Player):Boolean
   {
-    return (!_construction && _goal.hasContactY(player));
+    return (!_construction && _goal.hasContactY(player) < 0);
   }
 
   // setMode(construction)
