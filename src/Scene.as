@@ -114,9 +114,9 @@ public class Scene extends Sprite
       _platesize = new Point(300, 300);
       updateCaption("PUSH MATERIALS WITH CURSOR AND\nHOP ONTO THE LEFT PLATFORM.");
       // carrot
-      addEntity(new Material(this, 7, 11, 3, 1, 0, 0xff8800, 0));
+      addEntity(new Material(this, 7, 11, 3, 1, 0, 0xff8800));
       // cucumber
-      addEntity(new Material(this, 11, 8, 1, 3, 1, 0x116600, 0));
+      addEntity(new Material(this, 11, 8, 1, 3, 1, 0x116600));
       // platform
       addPlatform(4, 10, 13, 10);
       player = new Player(this, 7, 3);
@@ -126,9 +126,9 @@ public class Scene extends Sprite
       _platesize = new Point(400, 400);
       updateCaption("STICK MATERIALS TOGETHER AND\nJUMP HIGHER.");
       // tomato
-      addEntity(new Material(this, 7, 8, 2, 2, 2, 0xff0000, 0));
+      addEntity(new Material(this, 7, 8, 2, 2, 2, 0xff0000));
       // cucumber
-      addEntity(new Material(this, 11, 7, 1, 3, 1, 0x116600, 0));
+      addEntity(new Material(this, 11, 7, 1, 3, 1, 0x116600));
       // platform
       addPlatform(3, 9, 15, 7);
       player = new Player(this, 7, 3);
@@ -136,13 +136,13 @@ public class Scene extends Sprite
 
     case 2:
       _platesize = new Point(500, 400);
-      updateCaption("ROASTING MAKES FOOD SHRINK BUT HARDER.");
+      updateCaption("ROASTING MAKES FOOD SMALLER BUT STICKABLE.");
       // factories
       addFactory(new RoastingFactory(new Rectangle(10, size.y-10-80, 120, 80)));
       // tomato
-      addEntity(new Material(this, 7, 6, 2, 2, 2, 0xff0000, 0xff4400));
+      addEntity(new Material(this, 7, 6, 2, 2, 2, 0xff0000));
       // cucumber
-      addEntity(new Material(this, 13, 7, 1, 3, 1, 0x116600, 0x337700));
+      addEntity(new Material(this, 13, 7, 1, 3, 1, 0x116600));
       // pork
       addEntity(new Material(this, 6, 10, 3, 2, 0, 0xffaacc, 0xffccee));
       //addFactory(new SeasoningFactory(new Rectangle(size.x-20-160, size.y-20-80, 160, 80),
@@ -335,9 +335,11 @@ public class Scene extends Sprite
       for each (entity in _entities) {
 	if (entity is Material) {
 	  material = Material(entity);
+	  if (!material.stickable) continue;
 	  for each (var e:Entity in _entities) {
 	    if (e is Material) {
 	      var m:Material = Material(e);
+	      if (!m.stickable) continue;
 	      if (material.hasContact(m)) {
 		material.makeConnection(m);
 	      }

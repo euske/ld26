@@ -29,17 +29,26 @@ public class Material extends Entity
   [Embed(source="../assets/connected.mp3")]
   private static const ConnectedSoundCls:Class;
   private static const connectedsound:Sound = new ConnectedSoundCls();
+  // Roasted sound.
+  [Embed(source="../assets/roast.mp3")]
+  private static const RoastSoundCls:Class;
+  private static const roastsound:Sound = new RoastSoundCls();
+  // Seasoned sound.
+  [Embed(source="../assets/season.mp3")]
+  private static const SeasonSoundCls:Class;
+  private static const seasonsound:Sound = new SeasonSoundCls();
+
 
   // Material(scene, pt)
   public function Material(scene:Scene, 
 			   x:int, y:int, width:int, height:int, 
-			   shape:int, rawcolor:uint, roastedcolor:uint)
+			   shape:int, rawcolor:uint, roastedcolor:uint=0)
   {
     super(scene, new Rectangle(x*unit, y*unit, width*unit, height*unit));
     this.shape = shape;
     this.rawcolor = rawcolor;
     this.roastedcolor = roastedcolor;
-    _glow = new Glow(bounds.width, bounds.height);
+    _glow = new Glow(this);
     addChild(_glow);
     updateGraphics();
   }
@@ -58,6 +67,12 @@ public class Material extends Entity
     vx = dx;
     vy = dy;
     return true;
+  }
+
+  // stickable:
+  public function get stickable():Boolean
+  {
+    return (roastedcolor == 0 || _roasted);
   }
 
   // clearConnection(): clear connections.
@@ -119,15 +134,23 @@ public class Material extends Entity
   // roast()
   public function roast():void
   {
-    _roasted = true;
-    updateGraphics();
+    if (!_roasted && roastedcolor != 0) {
+      _roasted = true;
+      roastsound.play();
+      bounds.width -= unit;
+      bounds.height -= unit;
+      updateGraphics();
+    }
   }
 
   // season()
   public function season():void
   {
-    _seasoned = true;
-    updateGraphics();
+    if (!_seasoned) {
+      _seasoned = true;
+      seasonsound.play();
+      updateGraphics();
+    }
   }
 
   // blinking status.
@@ -178,16 +201,15 @@ public class Material extends Entity
 } // package
 
 import flash.display.Shape;
+import flash.display.Sprite;
 
 class Glow extends Shape
 {
-  private var _width:int;
-  private var _height:int;
+  public var sprite:Sprite;
 
-  public function Glow(width:int, height:int)
+  public function Glow(sprite:Sprite)
   {
-    _width = width;
-    _height = height;
+    this.sprite = sprite;
   }
 
   public function setStrength(strength:int):void
@@ -199,17 +221,16 @@ class Glow extends Shape
       break;
     case 2:
       graphics.lineStyle(2, 0xffff00);
-      graphics.drawRect(0, 0, _width, _height);
+      graphics.drawRect(0, 0, sprite.width, sprite.height);
       break;
     case 3:
       graphics.lineStyle(4, 0xff8800);
-      graphics.drawRect(0, 0, _width, _height);
+      graphics.drawRect(0, 0, sprite.width, sprite.height);
       break;
     default:
       graphics.lineStyle(4, 0xcc0000);
-      graphics.drawRect(0, 0, _width, _height);
+      graphics.drawRect(0, 0, sprite.width, sprite.height);
       break;
     }
   }
 }
-
