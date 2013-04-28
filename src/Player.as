@@ -27,9 +27,14 @@ public class Player extends Actor
   [Embed(source="../assets/move.mp3")]
   private static const MoveSoundCls:Class;
   private static const movesound:Sound = new MoveSoundCls();
+  // Dead sound.
+  [Embed(source="../assets/dead.mp3")]
+  private static const DeadSoundCls:Class;
+  private static const deadsound:Sound = new DeadSoundCls();
 
   // last updated strength.
-  public var _strength:int = 1;
+  private var _strength:int;
+  private var _startpos:Point;
 
   // Player(scene)
   public function Player(scene:Scene, x:int, y:int)
@@ -94,16 +99,28 @@ public class Player extends Actor
     setVelocity(-_strength*10);
   }
 
+  // die()
+  public function die():void
+  {
+    deadsound.play();
+    bounds.x = _startpos.x;
+    bounds.y = _startpos.y;
+    _strength = 1;
+  }
+
   // setMode
   public override function setMode(construction:Boolean):void
   {
     super.setMode(construction);
-
+    
     if (construction) {
       bounds.x = Math.floor(bounds.x/unit)*unit;
       bounds.y = Math.floor(bounds.y/unit)*unit;
-    }
-
+    } else {
+      _startpos = new Point(bounds.x, bounds.y);
+      _strength = 1;
+    }    
+    
     this.alpha = 1.0;
     graphics.clear();
     graphics.beginFill(0x00cc00);

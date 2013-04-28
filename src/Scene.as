@@ -101,9 +101,11 @@ public class Scene extends Sprite
       addMaterial(new Material(this, 4, 7, 2, 2, 2, 0xff0000, 0xff8800));
       // cucumber
       addMaterial(new Material(this, 8, 6, 1, 3, 1, 0x116600, 0x88ff88));
+      // beef
+      addMaterial(new Material(this, 6, 8, 3, 2, 0, 0xcc1144, 0x884444));
       // platform
-      setPlatform(0, 10, 18, 10);
-      updateCaption("MOVE MATERIALS AND\nHOP ONTO THE PLATFORM.");
+      setPlatform(0, 7, 18, 7);
+      updateCaption("MOVE MATERIALS AND\nHOP ONTO THE LEFT PLATFORM.");
       player = new Player(this, 7, 3);
       break;
 
@@ -129,6 +131,9 @@ public class Scene extends Sprite
       // carrot
       //addMaterial(new Material(this, 7, 7, 3, 5, 0, 0xcccc88, 0xcccc88));
       addActor(new Enemy(this, 5, 5));
+      // 
+      setPlatform(0, 10, 18, 10);
+      updateCaption("COMBINE MATERIALS AND JUMP HIGHER.");
       player = new Player(this, 7, 3);
       break;
     }
@@ -218,11 +223,12 @@ public class Scene extends Sprite
   }
 
   // setLevelState(player)
-  public function setLevelState(player:Entity):void
+  public function setLevelState(player:Player):void
   {
     if (_construction) {
       // construction.
       if (_start.hasContact(player)) {
+	// start the platformer.
 	setMode(false);
       }
     } else {
@@ -230,6 +236,9 @@ public class Scene extends Sprite
       if (_goal.hasContact(player)) {
 	// finish the level.
 	setMode(true);
+      } else if (_size.y <= player.bounds.top) {
+	// dead.
+	player.die();
       }
     }
   }
