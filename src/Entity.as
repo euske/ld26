@@ -88,6 +88,12 @@ public class Entity extends Sprite
     vy = 0;
   }
 
+  // moving
+  public virtual function get moving():Boolean
+  {
+    return (vx != 0 || vy != 0);
+  }
+
   // clearForce(): clear forces.
   public virtual function clearForce():void
   {

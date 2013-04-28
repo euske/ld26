@@ -119,6 +119,10 @@ public class Main extends Sprite
   protected function OnKeyDown(e:KeyboardEvent):void 
   {
     switch (e.keyCode) {
+    case 80:			// P
+      setPauseState(!_paused);
+      break;
+
     case Keyboard.ESCAPE:	// Esc
     case 81:			// Q
       init();

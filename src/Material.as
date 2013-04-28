@@ -65,6 +65,7 @@ public class Material extends Entity
     if (!scene.isInsidePlate(r)) return false;
     for each (var entity:Entity in scene.getOverlappingEntities(r)) {
       if (entity != this) {
+	Main.log("entity="+entity);
 	if (!entity.applyForce(dx, dy)) return false;
       }
     }

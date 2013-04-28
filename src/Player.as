@@ -44,8 +44,6 @@ public class Player extends Actor
     if (_construction) {
       if (dx != 0) {
 	_dx = dx;
-	_blink = 0;
-	movesound.play();
       }
     } else {
       _dx = dx*4*_strength;
@@ -58,8 +56,6 @@ public class Player extends Actor
     if (_construction) {
       if (dy != 0) {
 	_dy = dy;
-	_blink = 0;
-	movesound.play();
       }
     } else {
       if (dy != 0) {
@@ -124,20 +120,21 @@ public class Player extends Actor
     graphics.drawRect(0, 0, unit, unit);
     graphics.endFill();
   }
-  
-  // blinking status.
-  private var _blink:int;
-  private static const cycle:int = 10;
 
+  protected override function get blinking():Boolean
+  {
+    return _construction;
+  }
+  
   public override function update():void
   {
     super.update();
     if (_construction) {
+      if (moving) {
+	movesound.play();
+      }
       _dx = 0;
       _dy = 0;
-      _blink++;
-      var phase:int = (_blink % (cycle*2));
-      this.alpha = ((phase < cycle)? (cycle-phase) : (phase-cycle))/(cycle-1);
     } else {
       var entities:Array = scene.getOverlappingEntities(getOffsetRect(0, +1));
       if (entities.length != 0) {

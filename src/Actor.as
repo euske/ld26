@@ -14,8 +14,6 @@ public class Actor extends Entity
   // _dx, _dy: intent to move.
   protected var _dx:int, _dy:int;
   
-  public static const gravity:int = 2;
-
   // Actor(scene, x, y)
   public function Actor(scene:Scene, x:int, y:int)
   {
@@ -45,9 +43,30 @@ public class Actor extends Entity
     }
   }
   
+  // blinking status.
+  private var _blink:int;
+  private static const cycle:int = 10;
+  protected virtual function get blinking():Boolean
+  {
+    return false;
+  }
+
+  protected virtual function get gravity():int
+  {
+    return 2;
+  }
+
   // update()
   public override function update():void
   {
+    if (moving) {
+      _blink = 0;
+    }
+    if (blinking) {
+      var phase:int = (_blink % (cycle*2));
+      this.alpha = ((phase < cycle)? (cycle-phase) : (phase-cycle))/(cycle-1);
+      _blink++;
+    }
     if (_construction) {
       // construction mode.
       var dx:int = _dx*unit;
@@ -91,8 +110,10 @@ public class Actor extends Entity
     var r:Rectangle = getOffsetRect(dx, dy);
     if (!scene.isInsideScreen(r) ||
 	scene.hasOverlappingPlatforms(r)) return true;
-    var entities:Array = scene.getOverlappingEntities(r);
-    return (entities.length != 0);
+    for each (var entity:Entity in scene.getOverlappingEntities(r)) {
+      if (entity != this) return true;
+    }
+    return false;
   }
 
 }

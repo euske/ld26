@@ -9,46 +9,45 @@ import flash.geom.Point;
 //
 public class Enemy extends Actor
 {
+  private var _orbit:Rectangle;
+
   // Enemy(scene)
-  public function Enemy(scene:Scene, x:int, y:int)
+  public function Enemy(scene:Scene, x:int, y:int, w:int, h:int)
   {
     super(scene, x, y);
-
+    
     graphics.beginFill(0x444444);
     graphics.drawRect(0, 0, unit, unit);
     graphics.endFill();
+    _orbit = new Rectangle(x*unit, y*unit, w*unit, h*unit);
+  }
+
+  protected override function get blinking():Boolean
+  {
+    return !_construction;
+  }
+  
+  protected override function get gravity():int
+  {
+    return 0;
   }
 
   // update()
-  private var _direction:int;
-  
   public override function update():void
   {
-    if (_direction == 0) {
-      if (Math.random() < 0.1) {
-	_direction = Math.floor(Math.random()*5);
+    if ((_orbit.left == bounds.left && _orbit.top == bounds.top) ||
+	(_orbit.right == bounds.right && _orbit.top == bounds.top) ||
+	(_orbit.left == bounds.left && _orbit.bottom == bounds.bottom) ||
+	(_orbit.right == bounds.right && _orbit.bottom == bounds.bottom)) {
+      // turn 90 degree (clockwise)
+      if (_dx == 0 && _dy == 0) {
+	_dx = 1;
+	_dy = 0;
+      } else {
+	var v:int = _dx;
+	_dx = -_dy;
+	_dy = v;
       }
-    } else {
-      // _direction != 0
-      if (Math.random() < 0.1) {
-	_direction = (_direction % 4)+1;
-      }
-    }
-    switch (_direction) {
-    case 1:
-      _dx = 1; _dy = 0;
-      break;
-    case 2:
-      _dx = 0; _dy = 1;
-      break;
-    case 3:
-      _dx = -1; _dy = 0;
-      break;
-    case 4:
-      _dx = 0; _dy = -1;
-      break;
-    default:
-      break;
     }
     super.update();
   }

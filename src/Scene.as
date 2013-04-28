@@ -176,7 +176,7 @@ public class Scene extends Sprite
       // tofu
       addEntity(new Material(this, 6, 10, 2, 2, 3, false, 0xffffcc));
       // enemy
-      addActor(new Enemy(this, 5, 5));
+      addActor(new Enemy(this, 5, 5, 9, 7));
       // platform
       addPlatform(0, 7, 18, 10);
       player = new Player(this, 7, 3);
@@ -261,7 +261,13 @@ public class Scene extends Sprite
   public function getOverlappingEntities(rect:Rectangle):Array
   {
     var entities:Array = new Array();
-    for each (var entity:Entity in _entities) {
+    var entity:Entity;
+    for each (entity in _entities) {
+      if (entity.bounds.intersects(rect)) {
+	entities.push(entity);
+      }
+    }
+    for each (entity in _actors) {
       if (entity.bounds.intersects(rect)) {
 	entities.push(entity);
       }
@@ -352,7 +358,7 @@ public class Scene extends Sprite
       // move/update materials.
       var pushed:Boolean = false;
       for each (entity in _entities) {
-	if (entity.vx != 0 || entity.vy != 0) {
+	if (entity.moving) {
 	  pushed = true;
 	}
 	if (entity is Material) {
