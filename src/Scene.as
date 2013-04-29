@@ -47,6 +47,8 @@ public class Scene extends Sprite
   {
     this.size = new Point(width, height);
     _window = new Rectangle(0, 0, width, height);
+
+    addChild(new Sun());
   }
   
   // setCenter(p)
@@ -184,22 +186,28 @@ public class Scene extends Sprite
       player = new Player(this, 7, 3);
       break;
 
-      //case 6:
-      updateCaption("JUST DO IT.");
+    case 6:
+      _platesize = new Point(500, 400);
+      updateCaption("FINAL LEVEL!\nJUST DO IT.");
+      // factories
+      addFactory(new RoastingFactory(new Rectangle(10, size.y-10-80, 120, 80)));
+      addFactory(new SeasoningFactory(new Rectangle(size.x-10-120, size.y-10-80, 120, 80)));
+      // potato
+      addEntity(new Material(this, 1, 1, 3, 2, 2, false, 0xccaa44));
+      // cucumber
+      addEntity(new Material(this, 6, 10, 1, 3, 1, false, 0x116600));
+      // pork
+      addEntity(new Material(this, 12, 8, 3, 2, 1, false, 0xffaacc, 0xffccee));
+      // fish
+      addEntity(new Material(this, 6, 6, 3, 1, 2, true, 0x44aacc));
+      // enemy
+      addActor(new Enemy(this, true, 15, 2, 2, 5));
+      // platform
+      addPlatform(0, 10, 18, 5);
+      player = new Player(this, 7, 3);
       break;
 
     default:
-      //addFactory(new SeasoningFactory(new Rectangle(size.x-20-160, size.y-20-80, 160, 80),
-      //0x008844, "SEASON"));
-      // beef
-      //addEntity(new Material(this, 5, 10, 3, 3, 0, 0xcc88cc, 0x884444));
-      // pork
-      //addEntity(new Material(this, 4, 4, 7, 3, 0, 0xffcccc, 0xcc8888));
-      // tofu
-      //addEntity(new Material(this, 6, 6, 5, 5, 0, 0xcccccc, 0xffffcc));
-      // carrot
-      //addEntity(new Material(this, 7, 7, 3, 5, 0, 0xcccc88, 0xcccc88));
-      //addActor(new Enemy(this, 5, 5));
       throw new Error("MLG");
 
     }
@@ -457,11 +465,14 @@ public class Scene extends Sprite
     var h:int = _platesize.y*_plate/maxplate;
     var r:Rectangle = new Rectangle((size.x-_platesize.x)/2, size.y-h, 
 				    _platesize.x, h);
+    graphics.beginFill(0xeeffff);
+    graphics.drawEllipse(r.x, r.y, r.width, r.height);
+    graphics.endFill();
+    r.inflate(-r.width/8, -r.height/8);
     graphics.beginFill(0xffffff);
     graphics.drawEllipse(r.x, r.y, r.width, r.height);
     graphics.endFill();
-    graphics.lineStyle(4, 0x000000);
-    r.inflate(-r.width/8, -r.height/8);
+    graphics.lineStyle(2, 0x888888);
     graphics.drawEllipse(r.x, r.y, r.width, r.height);
   }
 
@@ -469,6 +480,8 @@ public class Scene extends Sprite
 
 } // package
 
+import flash.display.Shape;
+import flash.display.Sprite;
 import flash.geom.Rectangle;
 import Entity;
 
@@ -479,10 +492,27 @@ class Platform extends Entity
     super(scene, new Rectangle(Entity.unit*x, Entity.unit*y, 
 			       Entity.unit*2, Entity.unit*1));
 
-    graphics.beginFill(0x888888);
+    graphics.beginFill(0xffffff);
     graphics.drawRect(0, 0, bounds.width, bounds.height);
     graphics.endFill();
-    graphics.lineStyle(4, 0xffffff);
+    graphics.lineStyle(4, 0x888888);
     graphics.drawRect(0, 0, bounds.width, bounds.height);
+  }
+}
+
+class Sun extends Shape
+{
+  public function Sun()
+  {
+    super();
+    graphics.beginFill(0xff0000);
+    graphics.drawEllipse(20, 20, 70, 60);
+    graphics.endFill();
+    graphics.lineStyle(4, 0xff0000);
+    for (var i:int = 0; i < 9; i++) {
+      var t:Number = i*2*Math.PI/9;
+      graphics.moveTo(40*Math.cos(t)+55, 35*Math.sin(t)+50);
+      graphics.lineTo(50*Math.cos(t+0.05)+55, 40*Math.sin(t+0.05)+50);
+    }
   }
 }

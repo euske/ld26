@@ -19,10 +19,10 @@ public class MainState extends GameState
   // Music
   [Embed(source="../assets/music1.mp3")]
   private static const Music1SoundCls:Class;
-  private static const music1sound:Sound = new Music1SoundCls();
+  public static const music1sound:Sound = new Music1SoundCls();
   [Embed(source="../assets/music2.mp3")]
   private static const Music2SoundCls:Class;
-  private static const music2sound:Sound = new Music2SoundCls();
+  public static const music2sound:Sound = new Music2SoundCls();
 
   // Level sound.
   [Embed(source="../assets/nextlevel.mp3")]
@@ -53,7 +53,7 @@ public class MainState extends GameState
   // open()
   public override function open():void
   {
-    player = scene.setLevel(5);
+    player = scene.setLevel(0);
     scene.setMode(true);
     startMusic(music1sound);
 

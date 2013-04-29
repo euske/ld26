@@ -206,7 +206,8 @@ public class Material extends Entity
     graphics.beginFill((_roasted)? roastedcolor : rawcolor);
     switch (shape) {
     case 1:
-      graphics.drawRoundRect(0, 0, bounds.width, bounds.height, 8, 8);
+      graphics.drawRoundRect(0, 0, bounds.width, bounds.height, 
+			     bounds.width/4, bounds.height/4);
       break;
     case 2:
       graphics.drawEllipse(0, 0, bounds.width, bounds.height);

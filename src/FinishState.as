@@ -1,6 +1,7 @@
 package {
 
 import flash.display.Bitmap;
+import flash.media.Sound;
 import flash.events.Event;
 import flash.ui.Keyboard;
 import GameState;
@@ -9,11 +10,17 @@ import GameState;
 // 
 public class FinishState extends GameState
 {
+  // Finish sound
+  [Embed(source="../assets/finish.mp3")]
+  private static const FinishSoundCls:Class;
+  public static const finishsound:Sound = new FinishSoundCls();
+
   private var text:Bitmap;
 
   public function FinishState(width:int, height:int)
   {
-    text = Main.Font.render("CONGRATULATIONS!\nYER SO MLG!!", 0xffff00, 3);
+    text = Main.Font.render("CONGRATULATIONS\nYOU BEAT THE GAME!\n\nEM EL GEEEE!!", 
+			    0xffff00, 3);
     text.x = (width-text.width)/2;
     text.y = (height-text.height)/2;
   }
@@ -22,6 +29,7 @@ public class FinishState extends GameState
   public override function open():void
   {
     addChild(text);
+    finishsound.play();
   }
 
   // close()
