@@ -79,7 +79,7 @@ public class Material extends Entity
   // stickable:
   public function get stickable():Boolean
   {
-    return (roastedcolor == 0 || _roasted);
+    return (roastedcolor == 0 || _roasted) && (!_seasoned);
   }
 
   // clearConnection(): clear connections.
@@ -157,7 +157,7 @@ public class Material extends Entity
   // season()
   public function season():void
   {
-    if (!_roasted && !_seasoned) {
+    if (perishable && !_roasted && !_seasoned) {
       _seasoned = true;
       seasonsound.play();
       updateGraphics();

@@ -30,6 +30,7 @@ public class Enemy extends Actor
   // setMode
   public override function setMode(construction:Boolean):void
   {
+    super.setMode(construction);
     _dead = false;
     updateGraphics();
   }
@@ -88,8 +89,13 @@ public class Enemy extends Actor
       vx = _dx*unit;
       vy = _dy*unit;
     } else {
-      vx = _dx*8;
-      vy = _dy*8;
+      if (lethal) {
+	vx = _dx*16;
+	vy = _dy*16;
+      } else {
+	vx = _dx*8;
+	vy = _dy*8;
+      }
     }
     super.update();
   }

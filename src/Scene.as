@@ -36,6 +36,9 @@ public class Scene extends Sprite
   // plate status (10: full, 0: none)
   private var _plate:int = 0;
   private static const maxplate:int = 10;
+  
+  private var _background1:Sprite;
+  private var _background2:Sprite;
 
   // Push sound.
   [Embed(source="../assets/push.mp3")]
@@ -47,8 +50,10 @@ public class Scene extends Sprite
   {
     this.size = new Point(width, height);
     _window = new Rectangle(0, 0, width, height);
-
-    addChild(new Sun());
+    _background1 = new PeacefulBackground(width, height);
+    _background2 = new AwfulBackground(width, height);
+    addChild(_background1);
+    addChild(_background2);
   }
   
   // setCenter(p)
@@ -152,7 +157,7 @@ public class Scene extends Sprite
 
     case 4:
       _platesize = new Point(450, 400);
-      updateCaption("ENEMY IS ANNOYING.");
+      updateCaption("ENEMY IS ANNOYING.\nBUT IT CAN BE USED.");
       // pork
       addEntity(new Material(this, 7, 6, 3, 2, 1, false, 0xffaacc, 0xffccee));
       // cucumber
@@ -160,7 +165,7 @@ public class Scene extends Sprite
       // tofu
       addEntity(new Material(this, 6, 10, 2, 2, 3, false, 0xffffcc));
       // enemy
-      addActor(new Enemy(this, false, 5, 5, 10, 8));
+      addActor(new Enemy(this, false, 5, 4, 10, 10));
       // platform
       addPlatform(1, 7, 17, 9);
       player = new Player(this, 7, 3);
@@ -180,6 +185,7 @@ public class Scene extends Sprite
       // tomato
       addEntity(new Material(this, 10, 8, 2, 2, 2, false, 0xff0000));
       // enemy
+      addActor(new Enemy(this, true, 2, 5, 2, 4));
       addActor(new Enemy(this, true, 15, 2, 2, 5));
       // platform
       addPlatform(0, 10, 18, 5);
@@ -193,15 +199,18 @@ public class Scene extends Sprite
       addFactory(new RoastingFactory(new Rectangle(10, size.y-10-80, 120, 80)));
       addFactory(new SeasoningFactory(new Rectangle(size.x-10-120, size.y-10-80, 120, 80)));
       // potato
-      addEntity(new Material(this, 1, 1, 3, 2, 2, false, 0xccaa44));
+      addEntity(new Material(this, 6, 6, 3, 2, 2, false, 0xccaa44));
       // cucumber
-      addEntity(new Material(this, 6, 10, 1, 3, 1, false, 0x116600));
+      addEntity(new Material(this, 13, 11, 1, 3, 1, false, 0x116600));
       // pork
-      addEntity(new Material(this, 12, 8, 3, 2, 1, false, 0xffaacc, 0xffccee));
+      addEntity(new Material(this, 10, 4, 3, 2, 1, false, 0xffaacc, 0xffccee));
       // fish
-      addEntity(new Material(this, 6, 6, 3, 1, 2, true, 0x44aacc));
+      addEntity(new Material(this, 12, 8, 3, 1, 2, true, 0x44aacc));
+      // tomato
+      addEntity(new Material(this, 4, 10, 2, 2, 2, false, 0xff0000));
       // enemy
-      addActor(new Enemy(this, true, 15, 2, 2, 5));
+      addActor(new Enemy(this, false, 7, 9, 3, 4));
+      addActor(new Enemy(this, true, 15, 2, 5, 3));
       // platform
       addPlatform(0, 10, 18, 5);
       player = new Player(this, 7, 3);
@@ -459,6 +468,8 @@ public class Scene extends Sprite
       // fold down.
       _plate--;
     }
+    _background1.alpha = _plate/maxplate;
+    _background2.alpha = (1-_plate/maxplate);
     graphics.clear();
 
     // draw the plate.
@@ -480,7 +491,6 @@ public class Scene extends Sprite
 
 } // package
 
-import flash.display.Shape;
 import flash.display.Sprite;
 import flash.geom.Rectangle;
 import Entity;
@@ -500,19 +510,32 @@ class Platform extends Entity
   }
 }
 
-class Sun extends Shape
+class PeacefulBackground extends Sprite
 {
-  public function Sun()
+  public function PeacefulBackground(width:int, height:int)
   {
-    super();
     graphics.beginFill(0xff0000);
-    graphics.drawEllipse(20, 20, 70, 60);
+    graphics.drawEllipse(70, 70, 70, 60);
     graphics.endFill();
     graphics.lineStyle(4, 0xff0000);
     for (var i:int = 0; i < 9; i++) {
       var t:Number = i*2*Math.PI/9;
-      graphics.moveTo(40*Math.cos(t)+55, 35*Math.sin(t)+50);
-      graphics.lineTo(50*Math.cos(t+0.05)+55, 40*Math.sin(t+0.05)+50);
+      graphics.moveTo(40*Math.cos(t)+105, 35*Math.sin(t)+100);
+      graphics.lineTo(50*Math.cos(t+0.05)+105, 40*Math.sin(t+0.05)+100);
+    }
+  }
+}
+
+class AwfulBackground extends Sprite
+{
+  public function AwfulBackground(width:int, height:int)
+  {
+    graphics.lineStyle(1, 0x888888);
+    for (var i:int = 0; i < 9; i++) {
+      var x:int = ((i*4)%11)*30+100;
+      var y:int = i*20+100;
+      graphics.moveTo(x, y);
+      graphics.lineTo(x+150, y);
     }
   }
 }
