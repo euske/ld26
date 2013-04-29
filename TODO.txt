@@ -1,0 +1,189 @@
+
+-- hour 0.
+
+Minimalizm: Simplifying ideas.
+ not complex, complicated.
+ quick, easy?-- 
+ clean
+
+*Minimalistic rule
+ -You're an architect and try to build minimalistic house. Critics rate how "artsy" your house is.
+
+*Involves some creation?
+ -Food, house, animals?
+               Minimalistic animals?
+ -Drive a car minimalism?
+ -Minimalistic fridge? mouse? window? pants?
+
+Who wants minimalism other than artists?
+ - environmental people?
+
+Who/why wants minimalism? What's good/bad?
+
+*Minimizing is goal
+ *Trash compactor (by size, temperature?)
+ *??? (by complexity)
+
+*Minimizing is anti-goal
+ Minimalism as punishment.
+
+*Try to achieve minimalizm ending up with something big.
+ -Game of Life
+ 
+*Zen garden?
+ Metaphor
+
+*Shooting game & Minimalism?
+ 1 or 2 enemies, 1 weapon, you cannot move
+ -You're a space architect and you shoot building to cut down to a minimalistic building.
+
+*Platformer game & Minimalism?
+
+- Cooking
+  Minimalistic
+
+--
+2. Shooting game making something minimalistic.
+  - A random structure is given.
+  - Shoot them out to cut down to a minimalistic structure.
+  - There are other obstacles.
+
+1. Puzzle/creation game of minimalistic structure.
+ -You're an architect and try to build minimalistic house. Critics rate how "minimalistic" your house is.
+ -There are monsters which prevent you from building.
+  0. get a client
+  1. you collect materials and build a house. (top down)
+     build a sketch of a house.
+      you move around,
+      you push things by yourself.
+  2. which has to meet a certain condition.
+    (has a bathroom, kitchen)
+  3. and minimalistic. (simple structure)
+     use only lines, flat planks, etc.
+
+  Random level / Designed level?
+
+What is minimalistic state?
+
+-- hour 1
+
+1. Implement movable objects. (done)
+2. Player/Enemies?
+3. Can push things.
+
+-- hour 2
+
+3. Can push thigns. (done)
+
+-- hour 3
+
+4. Make a few "factories".
+
+-- hour 4
+
+5. ???
+6. Profit!
+
+-- hour 5
+
+7. add seasoning
+
+-- hour 6
+
+8. make them connectable?
+
+-- hour 7
+
+9. make them platformer(unfinished)
+
+-- hour 8
+
+10. make them platformer (cont'd)
+11. debug the connectable part.
+
+-- hour 9
+
+12. break! dinner!
+
+-- hour 10
+
+TODO again:
+  Code cleanup. (done)
+  Have some enemies.
+   (wind, earthquake, temp.?)
+  Have some mechanics.
+
+-- hour 11
+
+  Fix the bugs. (half done)
+  Try to add enemies. (not done)
+
+-- hour 12 (1/4)
+
+  - Fix the bugs.
+  - Tweak enemies.
+  - Have some rules/mechanics.
+
+-- hour 20
+
+ - Fix the bugs (what bugs? - fixed!)
+ - Blinking player. (in construction)
+
+-- hour 23
+
+ - Level design.
+ - Make platform goals.
+ - Enemy
+
+-- hour 24
+
+ - Better graphics.
+ - Adding sounds.
+ - Moar level design.
+
+-- hour 24+7 (15 left)
+
+ TODO:
+ - Roasting/Seasoning
+ - Level design.
+ - Enemies.
+ - Attacking enemies.
+
+-- hour 24+8 (16 hrs left)
+
+ - 6 hrs sleep
+ - 1 hrs eat, 1 hrs bath
+
+ 8 hours...
+ - Seasoning? (done)
+ - Enemies. (half-done)
+ - Level design.
+
+-- 14 hrs left (=6 hrs)
+
+ - Enemies
+ - Attacking enemies.
+
+ - Add Potato?
+
+-- 4 hours left
+ - Attacking enemy - done
+ - Add music - done
+
+-- 3 hours left
+ - title picture.
+ - Music has to be stopped when paused
+
+- 2 hours
+ - Level design /Add potato
+ - title picture / music
+ - ending picture /music
+ - effects?
+
+- hour!
+ - effects?
+ - screenshots
+ - level design
+
+CONCLUSION:
+ finished in time!
