@@ -1,0 +1,99 @@
+Rather Belated Post-mortem
+by euske
+
+A couple of my thoughts about my first participation of LD:
+
+Don't Take the Theme Too Seriously
+
+I think I tried to interpret the theme a bit too literary.  I thought
+the game has to be *about* minimalism, which means that minimalism is
+not about its styles, but the *goal* of the game. What's the problem
+with that? It turned out to be difficult to come up with a game design
+that is about minimalism but still enjoyable. I thought minimalism
+always involves some sort of design or structural construction, which
+is a creative act, so the obvious choice for me is to make some kind
+of puzzle game.  But I didn't want to make a puzzle game! I wanted to
+make an action game.  So this put me into a dilemma. I spent one hour
+for brainstorming the basic idea in the beginning, but even after
+that, I wasn't really sure what I'm going to do.
+
+The first idea that came to me was a trash compactor. Its goal is to
+minimize the volume of garbage, and it can be a game. But it didn't
+much sound like minimalism, so I came up another idea, which is to
+design a minimalistic house under some condition (think of an artsy
+house that modern architects design). I was thinking of something like
+"Art Game" by Pippin Bar (http:// ). You push materials around and
+then "play" on it. And then at some point, the materials turned into
+food, and some crazy insight told me that I should make a platformer
+on the top of it. Hence the idea of my game "Controlled Diet" has
+come into reality.
+
+
+You cannot Learn Your Tools Enough
+
+I used a combination of Windows + Linux environment (I run Arch Linux
+on VirtualBox on Windows). I edit and compile on a Linux machine and
+test it on a Windows machine. I used a vanilla Flex SDK 4.6 and
+Makefile (Yes, I am very old school). I used a shell and Python
+interpreter, as well as a set of well-known tools (e.g. ImageMagick).
+Here are things that I think would be useful if anyone uses a similar
+environment like mine:
+
+ * Get used to Emacs' Actionscript-mode.
+   There are several versions of it by different authors, and
+   they vary slightly in its highlighting and indentation.
+   Using a wrong one will end up a lot of annoyance.
+
+ * Use a debug version of standalone Flash Player, so that 
+   you can double-click the build and run it directly.
+
+ * Don't forget to add -debug=true compiler option to mxmlc,
+   otherwise trace() wouldn't work!
+
+ * Use fdb (Flash command line debugger) to siphon trace()
+   outputs to a stdout/file.
+
+ * git config --global core.filemode false
+
+ * If your machine is slow to launch Java, try using fcsh
+   (Flash compiler shell), which somewhat reduces the startup time
+   of mxmlc (but not by a large margin).
+
+The bottom line is that the more efficient the edit-build-test-debug
+cycle, the better. Try to spot the bottlenecks as many as possible and
+eliminate them.
+
+
+IRC is Helpful
+
+I had been lurking around the Ludumdare IRC channel for a couple of
+weeks, and I can tell that this is a very nice place to hang out. You
+see a lot of people talking about their ideas. At one point I was
+murmuring about the need of creating a quad-tree implementation that
+was necessary for my simplistic physics engine. Then someone in the
+chat said "a quadtree is overkill for this", and he was right; I
+didn't really need a quadtree for only a dozen of objects. Now I want
+to thank that person. You saved me a lot of time.
+
+
+Things that Went Okay
+
+ * Overall framework. I wrote a generic framework and posted it on
+   github beforehand. This strategy went well. I can start quickly
+   tweaking on a working codebase, and it was simple enough to allow
+   me to change it drastically later on.
+
+ * Time management. I put a TODO list on my desktop and tried to
+   update it at every hour. Later I had to reorder things but this
+   helped me greatly to stay focused on what I'm going to do.
+
+ * autotracker.py. This is an awesome tool, even more so when you know
+   a bit of Python and how to tweak it. Thanks a lot.
+
+
+Believe in Your Idea, with Passion
+
+Generally, I think I'm more of an "idea" guy. I wanted to come up with
+a wacky, eccentric idea and somehow I succeeded in it. I finished my
+game, and even its not the most fun thing to play, I still enjoyed the
+whole process a lot. Hope I can do this next time again.
