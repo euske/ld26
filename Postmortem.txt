@@ -22,11 +22,12 @@ minimize the volume of garbage, and it can be a game. But it didn't
 much sound like minimalism, so I came up another idea, which is to
 design a minimalistic house under some condition (think of an artsy
 house that modern architects design). I was thinking of something like
-"Art Game" by Pippin Bar (http:// ). You push materials around and
-then "play" on it. And then at some point, the materials turned into
-food, and some crazy insight told me that I should make a platformer
-on the top of it. Hence the idea of my game "Controlled Diet" has
-come into reality.
+"Art Game" by Pippin Barr
+(http://www.pippinbarr.com/games/artgame/ArtGame.html ). You push
+materials around and then "play" on it. And then at some point, the
+materials turned into food, and some crazy insight told me that I
+should make a platformer on the top of it. Hence the idea of my game
+"Controlled Diet" has come into reality.
 
 
 You cannot Learn Your Tools Enough
